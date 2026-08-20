@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="brand-logo-mark" style={{ width: 22, height: 22 }}>
             <Shield size={12} />
           </div>
-          <span>Visitor Verification Platform • Midnight Network</span>
+          <span>Night Access • Midnight Network</span>
         </div>
 
         <div className="footer-links">

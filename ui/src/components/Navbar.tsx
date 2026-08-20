@@ -28,7 +28,7 @@ export default function Navbar() {
             <Shield size={16} strokeWidth={2.2} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <span className="brand-name">Midnight Access</span>
+            <span className="brand-name">Night Access</span>
             <span className="brand-tag">PREPROD</span>
           </div>
         </Link>

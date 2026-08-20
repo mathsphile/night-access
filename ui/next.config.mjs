@@ -7,8 +7,13 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  compress: true,
+  poweredByHeader: false,
   transpilePackages: ['@midnight-ntwrk/dapp-connector-api', '@midnight-ntwrk/midnight-js-types'],
   outputFileTracingRoot: path.resolve(__dirname, '..'),
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
 };
 
 export default nextConfig;

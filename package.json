@@ -1,8 +1,8 @@
 {
   "name": "visitor-verification-platform",
   "version": "1.0.0",
-  "description": "Visitor Verification Platform on Midnight Network",
-  "author": "Visitor Verification Platform",
+  "description": "Night Access — Privacy-Preserving Zero-Knowledge Access Control on Midnight Network",
+  "author": "Night Access Team",
   "license": "MIT",
   "private": true,
   "type": "module",

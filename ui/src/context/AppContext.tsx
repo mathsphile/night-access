@@ -31,11 +31,15 @@ export interface AppContextType {
   visitorRecords: VisitorRecord[];
   blockHeight: number;
   isCmdOpen: boolean;
+  isWalletModalOpen: boolean;
   toasts: ToastItem[];
   setIsCmdOpen: (open: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   removeToast: (id: string) => void;
   toggleWallet: () => Promise<void>;
+  openWalletModal: () => void;
+  closeWalletModal: () => void;
+  connectWallet: (address: string, method: 'lace' | 'manual') => void;
   updateVenueId: (newVenue: string) => void;
   recordCheckIn: (venue: string, passcode: string) => Promise<string>;
 }
@@ -98,6 +102,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [visitorRecords, setVisitorRecords] = useState<VisitorRecord[]>(INITIAL_VISITORS);
   const [blockHeight, setBlockHeight] = useState<number>(241982);
   const [isCmdOpen, setIsCmdOpen] = useState<boolean>(false);
+  const [isWalletModalOpen, setIsWalletModalOpen] = useState<boolean>(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   // Initialize from localStorage on mount
@@ -154,6 +159,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
+  const openWalletModal = () => setIsWalletModalOpen(true);
+  const closeWalletModal = () => setIsWalletModalOpen(false);
+
+  const connectWallet = (address: string, method: 'lace' | 'manual') => {
+    setIsWalletConnected(true);
+    setWalletAddress(address);
+    localStorage.setItem(STORAGE_KEYS.WALLET_CONNECTED, 'true');
+    localStorage.setItem(STORAGE_KEYS.WALLET_ADDRESS, address);
+    const label = method === 'lace' ? 'Midnight Lace Wallet Connected!' : 'Wallet connected via manual address.';
+    showToast(label, 'success');
+  };
+
   const toggleWallet = async () => {
     if (isWalletConnected) {
       setIsWalletConnected(false);
@@ -163,42 +180,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       showToast('Midnight Wallet disconnected', 'info');
       return;
     }
-
-    const windowMidnight = (typeof window !== 'undefined' ? window : {}) as unknown as WindowMidnight;
-    const laceProvider = windowMidnight.midnight?.mnLace || windowMidnight.midnight?.lace;
-
-    if (!laceProvider) {
-      // Connect developer preview demo account if browser extension is not installed
-      const demoAddr = '0x37a9f810e201b48e9192410a8d71029c';
-      setIsWalletConnected(true);
-      setWalletAddress(demoAddr);
-      localStorage.setItem(STORAGE_KEYS.WALLET_CONNECTED, 'true');
-      localStorage.setItem(STORAGE_KEYS.WALLET_ADDRESS, demoAddr);
-      showToast('Connected to Midnight Preprod (Lace Demo Mode)', 'success');
-      return;
-    }
-
-    try {
-      showToast('Requesting authorization from Midnight Lace Wallet...', 'info');
-      const walletAPI = await laceProvider.enable();
-      const state = await walletAPI.state();
-      const rawAddr = state?.coinPublicKey || state?.address;
-      if (!rawAddr) throw new Error('Lace Wallet is locked or did not provide an account public key.');
-
-      const addr = rawAddr.startsWith('0x') ? rawAddr : '0x' + rawAddr;
-      setIsWalletConnected(true);
-      setWalletAddress(addr);
-      localStorage.setItem(STORAGE_KEYS.WALLET_CONNECTED, 'true');
-      localStorage.setItem(STORAGE_KEYS.WALLET_ADDRESS, addr);
-      showToast('Midnight Lace Wallet Connected!', 'success');
-    } catch (err) {
-      setIsWalletConnected(false);
-      setWalletAddress('');
-      localStorage.setItem(STORAGE_KEYS.WALLET_CONNECTED, 'false');
-      localStorage.removeItem(STORAGE_KEYS.WALLET_ADDRESS);
-      const msg = (err as Error)?.message || 'Wallet connection rejected.';
-      showToast(msg, 'error');
-    }
+    // Open the wallet connection modal — user chooses Lace or manual
+    openWalletModal();
   };
 
   const updateVenueId = (newVenue: string) => {
@@ -240,11 +223,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         visitorRecords,
         blockHeight,
         isCmdOpen,
+        isWalletModalOpen,
         toasts,
         setIsCmdOpen,
         showToast,
         removeToast,
         toggleWallet,
+        openWalletModal,
+        closeWalletModal,
+        connectWallet,
         updateVenueId,
         recordCheckIn,
       }}

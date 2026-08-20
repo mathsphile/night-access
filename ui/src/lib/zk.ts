@@ -1,5 +1,5 @@
 /**
- * Zero-Knowledge & Cryptography Utilities for Visitor Verification Platform
+ * Zero-Knowledge & Cryptography Utilities for Night Access (VVP)
  */
 
 // Helper to calculate SHA-256 commitment hash using Web Crypto API

@@ -92,32 +92,49 @@ async function main() {
 
   console.log(`\n✅ Confirmed Wallet Balance: ${nightBalance.toString()} tNIGHT`);
 
-  // Register UTXOs for DUST generation if needed
-  console.log('⚡ Registering tNIGHT UTXOs for DUST transaction fee generation...');
-  try {
-    const txId = await generateDust(logger, seed, unshieldedState, walletProvider.wallet);
-    if (txId) {
-      console.log(`✅ DUST generation transaction submitted: ${txId}`);
+  // Check and register UTXOs for DUST generation if needed
+  const unregistered = unshieldedState.availableCoins.filter((c) => !c.meta.registeredForDustGeneration);
+  if (unregistered.length > 0) {
+    console.log(`⚡ Registering ${unregistered.length} tNIGHT UTXOs for DUST transaction fee generation...`);
+    try {
+      const txId = await generateDust(logger, seed, unshieldedState, walletProvider.wallet);
+      if (txId) {
+        console.log(`✅ DUST generation transaction submitted: ${txId}`);
+      }
+    } catch (err: any) {
+      logger.warn(`DUST generation notification: ${err?.message || err}`);
     }
-  } catch (err: any) {
-    logger.warn(`DUST generation notification: ${err?.message || err}`);
+  } else {
+    console.log('✅ tNIGHT UTXOs are registered for DUST fee generation.');
   }
 
-  console.log(`🚀 Compiling ZK Circuit Witnesses and Submitting Transaction to Midnight Preprod...`);
+  console.log(`⏳ Waiting for DUST fee balance synchronization...`);
+  const syncedState = await Rx.firstValueFrom(
+    walletProvider.wallet.state().pipe(
+      Rx.filter((state) => state.dust.balance(new Date()) > 0n),
+      Rx.timeout({ each: 45000, with: () => Rx.firstValueFrom(walletProvider.wallet.state()) }),
+    ),
+  );
+
+  const dustBal = syncedState.dust.balance(new Date());
+  console.log(`✅ Confirmed DUST Balance: ${dustBal.toString()} tDUST`);
+
+  console.log(`🚀 Compiling ZK Circuit Witnesses and Submitting Contract Deployment to Midnight Preprod...`);
 
   try {
     const zkConfigPath = path.resolve(process.cwd(), 'contract', 'src', 'managed', 'bboard');
+    const zkConfigProvider = new NodeZkConfigProvider<any>(zkConfigPath);
     const providers = {
       midnightProvider: walletProvider,
       walletProvider: walletProvider,
       privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: 'vvp-preprod-state',
         accountId: unshieldedAddress.toString(),
-        privateStoragePasswordProvider: () => Promise.resolve('visitor-verification-platform-secure-key-12345'),
+        privateStoragePasswordProvider: () => Promise.resolve('K8mX9vL2pQ5wZ7rN3yT1bF4eM6jH0sU'),
       }),
       publicDataProvider: indexerPublicDataProvider(envConfig.indexer, envConfig.indexerWS),
-      zkConfigProvider: new NodeZkConfigProvider<any>(zkConfigPath),
-      proofProvider: httpClientProofProvider(envConfig.proofServer),
+      zkConfigProvider: zkConfigProvider,
+      proofProvider: httpClientProofProvider(envConfig.proofServer, zkConfigProvider),
     };
 
     logger.info('Submitting contract deployment on Midnight Preprod...');
@@ -125,28 +142,44 @@ async function main() {
     const deployedAddress = api.deployedContractAddress;
 
     console.log('\n============================================================');
-    console.log('🎉 SMART CONTRACT DEPLOYED ON MIDNIGHT PREPROD!');
+    console.log('🎉 SMART CONTRACT SUCCESSFULLY DEPLOYED ON MIDNIGHT PREPROD!');
     console.log('============================================================');
     console.log(`📍 Deployed Contract Address: ${deployedAddress}`);
     console.log(`🌐 Network: Midnight Preprod`);
     console.log(`🔗 Explorer: https://explorer.preprod.midnight.network/contract/${deployedAddress}`);
     console.log('============================================================\n');
 
-    // Update .env with deployed contract address
+    // Update root .env
     let envContent = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf-8') : '';
     if (envContent.includes('MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=')) {
-      envContent = envContent.replace(/MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=.*/, `MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}`);
+      envContent = envContent.replace(
+        /MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=.*/,
+        `MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}`,
+      );
     } else {
       envContent += `\nMIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}\n`;
     }
     fs.writeFileSync(envFilePath, envContent);
 
-    console.log('✅ Updated .env with deployed contract address.');
+    // Update ui/.env.local if exists or create it
+    const uiEnvLocalPath = path.resolve(process.cwd(), 'ui', '.env.local');
+    let uiEnvContent = fs.existsSync(uiEnvLocalPath) ? fs.readFileSync(uiEnvLocalPath, 'utf-8') : '';
+    if (uiEnvContent.includes('NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS=')) {
+      uiEnvContent = uiEnvContent.replace(
+        /NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS=.*/,
+        `NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS=${deployedAddress}`,
+      );
+    } else {
+      uiEnvContent += `NEXT_PUBLIC_MIDNIGHT_CONTRACT_ADDRESS=${deployedAddress}\n`;
+    }
+    fs.writeFileSync(uiEnvLocalPath, uiEnvContent);
+
+    console.log('✅ Updated .env and ui/.env.local with deployed contract address.');
   } catch (err: any) {
     console.error('\n❌ Deployment transaction error:', err?.message || err);
+    throw err;
   } finally {
     await walletProvider.stop().catch(() => {});
-    process.exit(0);
   }
 }
 

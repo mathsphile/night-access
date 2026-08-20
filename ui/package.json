@@ -1,7 +1,7 @@
 {
   "name": "@visitor-verification-platform/ui",
   "version": "1.0.0",
-  "description": "Next.js App for Visitor Verification Platform (Watermelon UI)",
+  "description": "Next.js App for Night Access — Zero-Knowledge Access Control",
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -12,7 +12,6 @@
   "dependencies": {
     "@midnight-ntwrk/dapp-connector-api": "4.0.1",
     "@midnight-ntwrk/midnight-js-types": "4.1.1",
-    "framer-motion": "^13.1.0",
     "lucide-react": "^1.33.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
