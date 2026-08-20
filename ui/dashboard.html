@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics & Access Dashboard | Visitor Verification Platform (Watermelon UI)</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 1.75rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        display: none;
+      }
+    }
+
+    .sidebar {
+      background: var(--bg-glass-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      color: var(--slate-300);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+
+    .sidebar-item.active {
+      background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 51, 102, 0.05));
+      border: 1px solid rgba(255, 51, 102, 0.35);
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(255, 51, 102, 0.15);
+    }
+
+    .circuit-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .circuit-metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-pill-box {
+      background: rgba(10, 14, 24, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid-pattern"></div>
+
+  <!-- Top Navbar -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="navbar-container">
+        <a href="/index.html" class="brand">
+          <div class="brand-logo">🍉</div>
+          <div class="brand-text">
+            <div class="brand-title">Watermelon VVP</div>
+            <div class="brand-subtitle">Midnight ZK Access</div>
+          </div>
+        </a>
+
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">
+            <span>✨</span> Home
+          </a>
+          <a href="/dashboard.html" class="nav-link active">
+            <span>📊</span> Dashboard
+          </a>
+          <a href="/checkin.html" class="nav-link">
+            <span>🔑</span> Check-In
+          </a>
+          <a href="/admin.html" class="nav-link">
+            <span>🏛️</span> Venue Admin
+          </a>
+          <a href="/inspector.html" class="nav-link">
+            <span>🔍</span> Inspector
+          </a>
+          <a href="/explorer.html" class="nav-link">
+            <span>🌐</span> Explorer
+          </a>
+        </div>
+
+        <div class="navbar-actions">
+          <button class="cmd-trigger-btn" id="cmdPaletteBtn" title="Search (⌘K)">
+            <span>🔍</span>
+            <span>Search</span>
+            <span class="cmd-kbd">⌘K</span>
+          </button>
+          
+          <div class="network-badge">
+            <div class="status-dot"></div>
+            <span>Preprod</span>
+          </div>
+
+          <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content Dashboard -->
+  <main class="animated-entry">
+    
+    <!-- Top Welcome Header -->
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+      <div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">
+          Venue Verification <span class="gradient-text">Operations Dashboard</span>
+        </h1>
+        <p style="color: var(--slate-400); font-size: 0.92rem; margin-top: 0.25rem;">
+          Real-time Zero-Knowledge visitor streams, Compact circuit telemetry, and venue gate controllers.
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem;">
+        <a href="/checkin.html" class="btn-primary" style="padding: 0.65rem 1.25rem; font-size: 0.88rem;">
+          <span>+</span> New Visitor Check-In
+        </a>
+        <a href="/admin.html" class="btn-secondary" style="padding: 0.65rem 1.25rem; font-size: 0.88rem;">
+          <span>🏛️</span> Gate Settings
+        </a>
+      </div>
+    </div>
+
+    <!-- Top KPI Cards -->
+    <section class="stats-grid" style="margin: 0 0 2rem 0;">
+      <div class="stat-card card-glow-pink">
+        <div class="stat-header">
+          <span class="stat-label">Total Verified Accesses</span>
+          <div class="stat-icon-wrap">🛡️</div>
+        </div>
+        <div class="stat-value" id="visitorCount">248</div>
+        <div class="stat-trend">
+          <span>↑ +14.2%</span>
+          <span style="color:var(--slate-500); font-weight:500;">active today</span>
+        </div>
+      </div>
+
+      <div class="stat-card card-glow-cyan">
+        <div class="stat-header">
+          <span class="stat-label">Active Venue Verifiers</span>
+          <div class="stat-icon-wrap">🏛️</div>
+        </div>
+        <div class="stat-value">3 <span style="font-size:1rem; color:var(--slate-400);">Venues</span></div>
+        <div class="stat-trend" style="color:var(--cyan-400);">
+          <span>● Gate A & VIP Active</span>
+        </div>
+      </div>
+
+      <div class="stat-card card-glow-emerald">
+        <div class="stat-header">
+          <span class="stat-label">Avg Prover Time</span>
+          <div class="stat-icon-wrap">⚡</div>
+        </div>
+        <div class="stat-value">385<span style="font-size:1.1rem; color:var(--emerald-400);">ms</span></div>
+        <div class="stat-trend">
+          <span>✓ Sub-second latency</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Midnight Preprod Block</span>
+          <div class="stat-icon-wrap">🌐</div>
+        </div>
+        <div class="stat-value" id="liveBlockHeight" style="font-size:1.7rem; color:var(--cyan-400);">#241,982</div>
+        <div class="stat-trend">
+          <span class="status-dot"></span>
+          <span>Node Synchronized</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Layout (Sidebar + Main Column) -->
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; padding-left: 0.5rem;">
+          Navigation
+        </div>
+        <div class="sidebar-menu">
+          <a href="#overview" class="sidebar-item active">
+            <span>📊</span> Overview
+          </a>
+          <a href="#visitorStream" class="sidebar-item">
+            <span>⚡</span> Real-time Stream
+          </a>
+          <a href="#zkTelemetry" class="sidebar-item">
+            <span>🛡️</span> ZK Circuit Telemetry
+          </a>
+          <a href="#venueController" class="sidebar-item">
+            <span>🏛️</span> Gate Controller
+          </a>
+          <a href="/checkin.html" class="sidebar-item">
+            <span>🔑</span> Check-In Terminal
+          </a>
+          <a href="/admin.html" class="sidebar-item">
+            <span>⚙️</span> Policy & Admin
+          </a>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(255, 51, 102, 0.08); border: 1px solid rgba(255, 51, 102, 0.25); border-radius: var(--radius-md);">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--watermelon-400); margin-bottom: 0.25rem;">
+            Midnight Lace
+          </div>
+          <div style="font-size: 0.75rem; color: var(--slate-400); line-height: 1.4;">
+            Zero-knowledge DApp Connector integration enabled.
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Dashboard Panels -->
+      <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+        
+        <!-- Live Visitor Stream Table Card -->
+        <div class="card card-glow-pink" id="visitorStream">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-icon">⚡</div>
+              <span>Live Visitor Access Stream</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <span class="card-badge" style="background: rgba(16,185,129,0.15); color: var(--emerald-400); border-color: rgba(16,185,129,0.3);">
+                LIVE FEED
+              </span>
+            </div>
+          </div>
+          <p style="color: var(--slate-400); font-size: 0.88rem; margin-bottom: 1.25rem;">
+            Real-time feed of zero-knowledge visitor verifications with cryptographic commitment hashes.
+          </p>
+
+          <div class="table-container">
+            <table class="watermelon-table">
+              <thead>
+                <tr>
+                  <th>Session ID</th>
+                  <th>Timestamp</th>
+                  <th>Venue Gate</th>
+                  <th>On-Chain Commitment Hash</th>
+                  <th>Access Tier</th>
+                  <th>Status</th>
+                  <th>Latency</th>
+                </tr>
+              </thead>
+              <tbody id="visitorTableBody">
+                <!-- Dynamically Rendered by index.ts -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ZK Circuit Performance & Gas Telemetry -->
+        <div class="card card-glow-cyan" id="zkTelemetry">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-icon">🔍</div>
+              <span>Midnight Compact ZK Circuit Telemetry</span>
+            </div>
+            <span class="card-badge">CONTRACT VERIFIED</span>
+          </div>
+
+          <p style="color: var(--slate-400); font-size: 0.88rem;">
+            Cryptographic execution statistics across the Midnight Proof Server and compact smart contract.
+          </p>
+
+          <div class="circuit-metrics-grid">
+            <div class="metric-pill-box">
+              <div style="font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase;">Circuit Constraints</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">1,420</div>
+              <div style="font-size: 0.75rem; color: var(--emerald-400); margin-top: 0.2rem;">✓ Ultra-lightweight SNARK</div>
+            </div>
+
+            <div class="metric-pill-box">
+              <div style="font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase;">Prover Memory Footprint</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">32.4 <span style="font-size:0.9rem; color:var(--slate-400);">MB</span></div>
+              <div style="font-size: 0.75rem; color: var(--cyan-400); margin-top: 0.2rem;">✓ Browser WASM Compatible</div>
+            </div>
+
+            <div class="metric-pill-box">
+              <div style="font-size: 0.75rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase;">Gas Consumption</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-top: 0.2rem;">0.0012 <span style="font-size:0.9rem; color:var(--slate-400);">tDUST</span></div>
+              <div style="font-size: 0.75rem; color: var(--emerald-400); margin-top: 0.2rem;">✓ Minimal On-Chain Fee</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <pre class="code-block"><code>// Active Circuit: verifyVisitor(verifier: Bytes&lt;32&gt;, salt: Bytes&lt;32&gt;)
+// Prover: Midnight ZK Prover 4.0 (Halo2/KZG Commitments)
+// Contract Address: 0x7a29f8c14e32049b8529341f98d011c750a49e21
+// Verifier Key Hash: 0xd9e29a01f7823b49e102fba781190bc2</code></pre>
+          </div>
+        </div>
+
+        <!-- Venue Gate Quick Controller -->
+        <div class="card card-glow-emerald" id="venueController">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-icon">🏛️</div>
+              <span>Active Venue Gate Controller</span>
+            </div>
+            <a href="/admin.html" class="btn-secondary" style="padding: 0.45rem 0.95rem; font-size: 0.82rem;">
+              Full Admin Console →
+            </a>
+          </div>
+
+          <div class="status-list">
+            <div class="status-box">
+              <div class="status-box-header">Current Active Venue ID</div>
+              <div class="status-box-value" id="currentVenueLabel">venue_stadium_gate_a</div>
+            </div>
+            <div class="status-box">
+              <div class="status-box-header">Last Registered Commitment</div>
+              <div class="status-box-value copy-trigger" id="lastCommitment" data-copy="0x6d795f7365637265745f76697369746f">0x6d795f7365637265745f76697369746f</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Command Palette Modal (⌘K) -->
+  <div class="cmd-modal-backdrop" id="cmdBackdrop">
+    <div class="cmd-palette">
+      <div class="cmd-input-wrap">
+        <span style="font-size:1.1rem; color:var(--slate-400);">🔍</span>
+        <input type="text" id="cmdSearchInput" class="cmd-search-input" placeholder="Type a command or search pages...">
+        <span class="cmd-kbd">ESC</span>
+      </div>
+      <div class="cmd-results" id="cmdResults">
+        <a href="/dashboard.html" class="cmd-item">
+          <span>📊 Open Analytics Dashboard</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Page</span>
+        </a>
+        <a href="/checkin.html" class="cmd-item">
+          <span>🔑 Visitor Check-In Portal</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Action</span>
+        </a>
+        <a href="/admin.html" class="cmd-item">
+          <span>🏛️ Venue Admin Console</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Admin</span>
+        </a>
+        <a href="/inspector.html" class="cmd-item">
+          <span>🔍 ZK Circuit Inspector</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Code</span>
+        </a>
+        <a href="/explorer.html" class="cmd-item">
+          <span>🌐 Midnight Preprod Explorer</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Network</span>
+        </a>
+        <div class="cmd-item connect-wallet-trigger">
+          <span>⚡ Toggle Midnight Lace Wallet</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Wallet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span style="font-size: 1.2rem;">🍉</span>
+        <span>Visitor Verification Platform • Watermelon UI Dashboard</span>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html" class="footer-link">Home</a>
+        <a href="/dashboard.html" class="footer-link">Dashboard</a>
+        <a href="/checkin.html" class="footer-link">Check-In</a>
+        <a href="/admin.html" class="footer-link">Venue Admin</a>
+        <a href="/inspector.html" class="footer-link">ZK Inspector</a>
+        <a href="/explorer.html" class="footer-link">Explorer</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>

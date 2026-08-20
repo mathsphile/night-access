@@ -3,110 +3,184 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZK Proof Inspector | Visitor Verification Platform</title>
+  <title>ZK Circuit Inspector | Visitor Verification Platform (Watermelon UI)</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
-  <style>
-    .code-block {
-      background: var(--slate-900);
-      color: #fbbf24;
-      padding: 1.25rem;
-      border-radius: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      overflow-x: auto;
-      margin-top: 1rem;
-    }
-  </style>
 </head>
 <body>
+  <div class="bg-grid-pattern"></div>
 
   <!-- Top Navbar -->
-  <nav class="navbar">
-    <div class="navbar-container">
-      <a href="/index.html" class="brand">
-        <div class="brand-title">Visitor Verification</div>
-      </a>
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="navbar-container">
+        <a href="/index.html" class="brand">
+          <div class="brand-logo">🍉</div>
+          <div class="brand-text">
+            <div class="brand-title">Watermelon VVP</div>
+            <div class="brand-subtitle">Midnight ZK Access</div>
+          </div>
+        </a>
 
-      <div class="nav-links">
-        <a href="/index.html" class="nav-link">Home</a>
-        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
-        <a href="/admin.html" class="nav-link">Venue Admin</a>
-        <a href="/inspector.html" class="nav-link active">ZK Inspector</a>
-        <a href="/explorer.html" class="nav-link">Explorer State</a>
-      </div>
-
-      <div class="navbar-actions">
-        <div class="network-badge">
-          <div class="status-dot"></div>
-          Midnight Preprod
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">
+            <span>✨</span> Home
+          </a>
+          <a href="/dashboard.html" class="nav-link">
+            <span>📊</span> Dashboard
+          </a>
+          <a href="/checkin.html" class="nav-link">
+            <span>🔑</span> Check-In
+          </a>
+          <a href="/admin.html" class="nav-link">
+            <span>🏛️</span> Venue Admin
+          </a>
+          <a href="/inspector.html" class="nav-link active">
+            <span>🔍</span> Inspector
+          </a>
+          <a href="/explorer.html" class="nav-link">
+            <span>🌐</span> Explorer
+          </a>
         </div>
-        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+
+        <div class="navbar-actions">
+          <button class="cmd-trigger-btn" id="cmdPaletteBtn" title="Search (⌘K)">
+            <span>🔍</span>
+            <span>Search</span>
+            <span class="cmd-kbd">⌘K</span>
+          </button>
+          
+          <div class="network-badge">
+            <div class="status-dot"></div>
+            <span>Preprod</span>
+          </div>
+
+          <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <!-- Main Content -->
   <main class="animated-entry">
-    <div class="card">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">
+        Compact Zero-Knowledge <span class="gradient-text">Circuit Inspector</span>
+      </h1>
+      <p style="color: var(--slate-400); font-size: 0.92rem; margin-top: 0.25rem;">
+        Inspect the Compact smart contract syntax, private witness logic, and verification constraints.
+      </p>
+    </div>
+
+    <div class="card card-glow-pink">
       <div class="card-header">
         <div class="card-title">
           <div class="card-icon">🔍</div>
-          Compact ZK Circuit Inspector (contracts/counter.compact)
+          <span>Compact ZK Circuit (contract/src/bboard.compact)</span>
         </div>
+        <button class="copy-trigger btn-secondary" data-copy="contract/src/bboard.compact" style="padding:0.4rem 0.85rem; font-size:0.8rem;">
+          📋 Copy Code
+        </button>
       </div>
 
-      <div class="status-list">
-        <div class="status-box">
-          <div class="status-box-header">Private Witness Function</div>
-          <div class="status-box-value">witness secretPasscode(): Bytes&lt;32&gt;;</div>
-        </div>
+      <p style="color: var(--slate-400); font-size: 0.9rem; margin-bottom: 1rem;">
+        The Compact circuit below uses multi-input persistent hashing to verify visitor credentials against registered venue parameters without exposing private witnesses.
+      </p>
 
-        <div class="status-box">
-          <div class="status-box-header">Exported Circuit Entrypoint</div>
-          <div class="status-box-value">export circuit verifyVisitor(expectedVerifier: Bytes&lt;32&gt;): Bytes&lt;32&gt;</div>
-        </div>
+      <pre class="code-block"><code>pragma language_version &gt;= 0.20;
 
-        <div class="status-box">
-          <div class="status-box-header">Deliberate Disclosure Statement</div>
-          <div class="status-box-value">lastVisitorCommitment = disclose(visitorCommitment);</div>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <pre>// Compact Smart Contract Definition
-pragma language_version 0.23;
 import CompactStandardLibrary;
 
-export ledger visitorCount: Counter;
-export ledger verifierId: Bytes&lt;32&gt;;
-export ledger lastVisitorCommitment: Bytes&lt;32&gt;;
+export enum State { vacant, occupied }
 
-witness secretPasscode(): Bytes&lt;32&gt;;
+export ledger currentVerifier: Bytes&lt;32&gt;;
+export ledger lastCommitment: Bytes&lt;32&gt;;
+export ledger totalVisitors: Uint&lt;32&gt;;
 
-export circuit verifyVisitor(expectedVerifier: Bytes&lt;32&gt;): Bytes&lt;32&gt; {
-  assert(verifierId == expectedVerifier, "Invalid verifier ID provided");
-  const passcode = secretPasscode();
-  const visitorCommitment = persistentHash&lt;Vector&lt;2, Bytes&lt;32&gt;&gt;&gt;([
-    pad(32, "vvp:visitor:commitment"),
-    passcode
-  ]);
-  visitorCount.increment(1);
-  const disclosedCommitment = disclose(visitorCommitment);
-  lastVisitorCommitment = disclosedCommitment;
-  return disclosedCommitment;
-}</pre>
-      </div>
+witness getPasscodeWitness(verifier: Bytes&lt;32&gt;): Bytes&lt;32&gt;;
+
+export circuit verifyVisitor(verifier: Bytes&lt;32&gt;, salt: Bytes&lt;32&gt;): [] {
+    // Ensure the target venue verifier matches current on-chain state
+    assert verifier == currentVerifier;
+
+    // Retrieve private passcode from local witness runtime
+    const witnessPasscode = getPasscodeWitness(verifier);
+
+    // Compute cryptographic commitment hash in Zero-Knowledge
+    const computedCommitment = persistent_hash&lt;Vector&lt;3, Bytes&lt;32&gt;&gt;&gt;(
+        [witnessPasscode, verifier, salt]
+    );
+
+    // Disclose commitment hash to ledger and increment visitor count
+    lastCommitment = computedCommitment;
+    totalVisitors = totalVisitors + 1;
+}
+
+export circuit resetVerifier(newVerifier: Bytes&lt;32&gt;): [] {
+    currentVerifier = newVerifier;
+}</code></pre>
     </div>
   </main>
 
+  <!-- Command Palette Modal (⌘K) -->
+  <div class="cmd-modal-backdrop" id="cmdBackdrop">
+    <div class="cmd-palette">
+      <div class="cmd-input-wrap">
+        <span style="font-size:1.1rem; color:var(--slate-400);">🔍</span>
+        <input type="text" id="cmdSearchInput" class="cmd-search-input" placeholder="Type a command or search pages...">
+        <span class="cmd-kbd">ESC</span>
+      </div>
+      <div class="cmd-results" id="cmdResults">
+        <a href="/dashboard.html" class="cmd-item">
+          <span>📊 Open Analytics Dashboard</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Page</span>
+        </a>
+        <a href="/checkin.html" class="cmd-item">
+          <span>🔑 Visitor Check-In Portal</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Action</span>
+        </a>
+        <a href="/admin.html" class="cmd-item">
+          <span>🏛️ Venue Admin Console</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Admin</span>
+        </a>
+        <a href="/inspector.html" class="cmd-item">
+          <span>🔍 ZK Circuit Inspector</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Code</span>
+        </a>
+        <a href="/explorer.html" class="cmd-item">
+          <span>🌐 Midnight Preprod Explorer</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Network</span>
+        </a>
+        <div class="cmd-item connect-wallet-trigger">
+          <span>⚡ Toggle Midnight Lace Wallet</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Wallet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <!-- Footer -->
-  <footer>
-    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span style="font-size: 1.2rem;">🍉</span>
+        <span>Visitor Verification Platform • Watermelon UI</span>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html" class="footer-link">Home</a>
+        <a href="/dashboard.html" class="footer-link">Dashboard</a>
+        <a href="/checkin.html" class="footer-link">Check-In</a>
+        <a href="/admin.html" class="footer-link">Venue Admin</a>
+        <a href="/inspector.html" class="footer-link">ZK Inspector</a>
+        <a href="/explorer.html" class="footer-link">Explorer</a>
+      </div>
+    </div>
   </footer>
 
   <script type="module" src="/src/index.ts"></script>

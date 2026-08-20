@@ -3,79 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preprod Network Explorer | Visitor Verification Platform</title>
+  <title>Preprod Network Explorer | Visitor Verification Platform (Watermelon UI)</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
+  <div class="bg-grid-pattern"></div>
 
   <!-- Top Navbar -->
-  <nav class="navbar">
-    <div class="navbar-container">
-      <a href="/index.html" class="brand">
-        <div class="brand-title">Visitor Verification</div>
-      </a>
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <div class="navbar-container">
+        <a href="/index.html" class="brand">
+          <div class="brand-logo">🍉</div>
+          <div class="brand-text">
+            <div class="brand-title">Watermelon VVP</div>
+            <div class="brand-subtitle">Midnight ZK Access</div>
+          </div>
+        </a>
 
-      <div class="nav-links">
-        <a href="/index.html" class="nav-link">Home</a>
-        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
-        <a href="/admin.html" class="nav-link">Venue Admin</a>
-        <a href="/inspector.html" class="nav-link">ZK Inspector</a>
-        <a href="/explorer.html" class="nav-link active">Explorer State</a>
-      </div>
-
-      <div class="navbar-actions">
-        <div class="network-badge">
-          <div class="status-dot"></div>
-          Midnight Preprod
+        <div class="nav-links">
+          <a href="/index.html" class="nav-link">
+            <span>✨</span> Home
+          </a>
+          <a href="/dashboard.html" class="nav-link">
+            <span>📊</span> Dashboard
+          </a>
+          <a href="/checkin.html" class="nav-link">
+            <span>🔑</span> Check-In
+          </a>
+          <a href="/admin.html" class="nav-link">
+            <span>🏛️</span> Venue Admin
+          </a>
+          <a href="/inspector.html" class="nav-link">
+            <span>🔍</span> Inspector
+          </a>
+          <a href="/explorer.html" class="nav-link active">
+            <span>🌐</span> Explorer
+          </a>
         </div>
-        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+
+        <div class="navbar-actions">
+          <button class="cmd-trigger-btn" id="cmdPaletteBtn" title="Search (⌘K)">
+            <span>🔍</span>
+            <span>Search</span>
+            <span class="cmd-kbd">⌘K</span>
+          </button>
+          
+          <div class="network-badge">
+            <div class="status-dot"></div>
+            <span>Preprod</span>
+          </div>
+
+          <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
 
   <!-- Main Content -->
   <main class="animated-entry">
-    <div class="card">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em;">
+        Midnight Preprod <span class="gradient-text">Network Diagnostics</span>
+      </h1>
+      <p style="color: var(--slate-400); font-size: 0.92rem; margin-top: 0.25rem;">
+        On-chain smart contract addresses, block explorer endpoints, and network health parameters.
+      </p>
+    </div>
+
+    <div class="card card-glow-cyan">
       <div class="card-header">
         <div class="card-title">
           <div class="card-icon">🌐</div>
-          Midnight Preprod Explorer & Network Diagnostics
+          <span>Midnight Network State & Explorer</span>
         </div>
       </div>
 
       <div class="status-list">
         <div class="status-box">
-          <div class="status-box-header">Deployed Smart Contract Address</div>
-          <div class="status-box-value" id="contractAddr">0x7a29f8c14e32049b8529341f98d011c750a49e21</div>
+          <div class="status-box-header">Deployed Compact Contract Address</div>
+          <div class="status-box-value copy-trigger" id="contractAddr" data-copy="0x7a29f8c14e32049b8529341f98d011c750a49e21" style="color:var(--cyan-400);">0x7a29f8c14e32049b8529341f98d011c750a49e21</div>
         </div>
 
         <div class="status-box">
-          <div class="status-box-header">Midnight Preprod Explorer</div>
+          <div class="status-box-header">Midnight Preprod Block Explorer</div>
           <div class="status-box-value">
-            <a href="https://explorer.preprod.midnight.network" target="_blank" style="color:var(--amber-600); font-weight:700;">https://explorer.preprod.midnight.network</a>
+            <a href="https://explorer.preprod.midnight.network" target="_blank" rel="noopener noreferrer" style="color:var(--watermelon-400); font-weight:700; text-decoration:none;">
+              https://explorer.preprod.midnight.network ↗
+            </a>
           </div>
         </div>
 
         <div class="status-box">
-          <div class="status-box-header">Public Data Indexer Provider</div>
-          <div class="status-box-value">https://indexer.preprod.midnight.network</div>
+          <div class="status-box-header">Proof Server Endpoint (Local & Remote)</div>
+          <div class="status-box-value" style="color:var(--slate-300); font-size:0.88rem;">http://127.0.0.1:6300 (Standalone / Docker Compose)</div>
         </div>
 
         <div class="status-box">
-          <div class="status-box-header">ZK Proof Server Infrastructure</div>
-          <div class="status-box-value" id="explorerProofServerEl" style="color:#10b981; font-weight:700;">Midnight Preprod ZK Proof Service (ONLINE)</div>
+          <div class="status-box-header">Network Status & Node Sync</div>
+          <div class="status-box-value" style="color:var(--emerald-400); display:flex; align-items:center; gap:0.5rem;">
+            <span class="status-dot"></span>
+            <span>Online & Receiving Zero-Knowledge State Transitions</span>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
+  <!-- Command Palette Modal (⌘K) -->
+  <div class="cmd-modal-backdrop" id="cmdBackdrop">
+    <div class="cmd-palette">
+      <div class="cmd-input-wrap">
+        <span style="font-size:1.1rem; color:var(--slate-400);">🔍</span>
+        <input type="text" id="cmdSearchInput" class="cmd-search-input" placeholder="Type a command or search pages...">
+        <span class="cmd-kbd">ESC</span>
+      </div>
+      <div class="cmd-results" id="cmdResults">
+        <a href="/dashboard.html" class="cmd-item">
+          <span>📊 Open Analytics Dashboard</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Page</span>
+        </a>
+        <a href="/checkin.html" class="cmd-item">
+          <span>🔑 Visitor Check-In Portal</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Action</span>
+        </a>
+        <a href="/admin.html" class="cmd-item">
+          <span>🏛️ Venue Admin Console</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Admin</span>
+        </a>
+        <a href="/inspector.html" class="cmd-item">
+          <span>🔍 ZK Circuit Inspector</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Code</span>
+        </a>
+        <a href="/explorer.html" class="cmd-item">
+          <span>🌐 Midnight Preprod Explorer</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Network</span>
+        </a>
+        <div class="cmd-item connect-wallet-trigger">
+          <span>⚡ Toggle Midnight Lace Wallet</span>
+          <span style="font-size:0.75rem; color:var(--slate-500);">Wallet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <!-- Footer -->
-  <footer>
-    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span style="font-size: 1.2rem;">🍉</span>
+        <span>Visitor Verification Platform • Watermelon UI</span>
+      </div>
+      <div class="footer-links">
+        <a href="/index.html" class="footer-link">Home</a>
+        <a href="/dashboard.html" class="footer-link">Dashboard</a>
+        <a href="/checkin.html" class="footer-link">Check-In</a>
+        <a href="/admin.html" class="footer-link">Venue Admin</a>
+        <a href="/inspector.html" class="footer-link">ZK Inspector</a>
+        <a href="/explorer.html" class="footer-link">Explorer</a>
+      </div>
+    </div>
   </footer>
 
   <script type="module" src="/src/index.ts"></script>
