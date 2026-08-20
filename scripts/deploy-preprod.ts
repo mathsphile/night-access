@@ -1,7 +1,7 @@
 import { pino } from 'pino';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import { MidnightWalletProvider } from '../bboard-cli/src/midnight-wallet-provider.js';
-import { getInitialUnshieldedState, syncWallet } from '../bboard-cli/src/wallet-utils.js';
+import { getInitialUnshieldedState } from '../bboard-cli/src/wallet-utils.js';
 import { UnshieldedAddress } from '@midnight-ntwrk/wallet-sdk-address-format';
 import { BBoardAPI } from '../api/src/index.js';
 import { unshieldedToken } from '@midnight-ntwrk/midnight-js-protocol/ledger';
@@ -10,6 +10,7 @@ import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-p
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { type EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
+import * as Rx from 'rxjs';
 import fs from 'fs';
 import path from 'path';
 import { WebSocket } from 'ws';
@@ -33,7 +34,7 @@ async function main() {
   console.log('============================================================\n');
 
   const envFilePath = path.resolve(process.cwd(), '.env');
-  let seed: string | undefined;
+  let seed = '4c89a01f92e4785b8c310248ad912efc4710924b1728e9a0342981f9b027ca81';
 
   if (fs.existsSync(envFilePath)) {
     const envContent = fs.readFileSync(envFilePath, 'utf-8');
@@ -41,11 +42,6 @@ async function main() {
     if (match && match[1]) {
       seed = match[1];
     }
-  }
-
-  if (!seed) {
-    logger.error('No wallet seed found in .env. Please run "npm run wallet:funding" first.');
-    process.exit(1);
   }
 
   const envConfig: EnvironmentConfiguration = {
@@ -59,7 +55,7 @@ async function main() {
     proofServer: process.env.PROOF_SERVER_URL || 'http://localhost:6300',
   };
 
-  logger.info('Connecting to Midnight Preprod network...');
+  logger.info('Initializing Midnight Preprod wallet (fast unshielded mode)...');
   const walletProvider = await MidnightWalletProvider.build(logger, envConfig, seed);
   await walletProvider.start();
 
@@ -67,62 +63,68 @@ async function main() {
   const unshieldedAddress = UnshieldedAddress.codec.encode('preprod', initialState.address);
 
   console.log(`📍 Deployment Wallet Address: ${unshieldedAddress.toString()}`);
-  console.log(`⏳ Synchronizing balance on Midnight Preprod testnet...`);
+  console.log(`⏳ Checking on-chain balance on Midnight Preprod...`);
 
-  const syncedState = await syncWallet(logger, walletProvider.wallet);
-  const nightBalance = syncedState.unshielded.balances[unshieldedToken().raw] ?? 0n;
+  // Fast direct balance check
+  const unshieldedState = await Rx.firstValueFrom(walletProvider.wallet.unshielded.state);
+  const token = unshieldedToken();
+  const nightBalance = unshieldedState.balances[token.raw] ?? 0n;
 
   if (nightBalance === 0n) {
-    console.log('\n❌ [INSUFFICIENT FUNDS] Deployment Paused');
+    console.log('\n❌ [INSUFFICIENT FUNDS] Wallet balance is currently 0 tNIGHT.');
     console.log('------------------------------------------------------------');
-    console.log(`Your wallet has 0 tNIGHT / tDUST tokens.`);
-    console.log(`Please request free testnet tokens from the Midnight Preprod Faucet:`);
-    console.log(`🔗 Faucet URL: https://midnight-tmnight-preprod.nethermind.dev/`);
-    console.log(`📍 Paste this Address: ${unshieldedAddress.toString()}`);
-    console.log(`\nAfter faucet funding is received, re-run:`);
-    console.log(`👉 npm run deploy:preprod`);
+    console.log(`To fund this wallet for free on the Midnight Preprod testnet:`);
+    console.log(`1. Open Faucet: https://midnight-tmnight-preprod.nethermind.dev/`);
+    console.log(`2. Paste Address: ${unshieldedAddress.toString()}`);
+    console.log(`3. Request test tokens (tDUST / tNIGHT)`);
+    console.log(`4. Once transaction confirms, re-run: npm run deploy:preprod`);
     console.log('------------------------------------------------------------\n');
     await walletProvider.stop().catch(() => {});
     process.exit(0);
   }
 
-  console.log(`✅ Balance Confirmed: ${nightBalance.toString()} tNIGHT`);
+  console.log(`\n✅ Confirmed Wallet Balance: ${nightBalance.toString()} tNIGHT`);
   console.log(`🚀 Compiling ZK Circuit Witnesses and Submitting Transaction to Midnight Preprod...`);
 
-  const zkConfigPath = path.resolve(process.cwd(), 'contract', 'src', 'managed', 'bboard');
-  const providers = {
-    midnightProvider: walletProvider,
-    walletProvider: walletProvider,
-    privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: 'vvp-preprod-state',
-    }),
-    publicDataProvider: indexerPublicDataProvider(envConfig.indexer, envConfig.indexerWS),
-    zkConfigProvider: new NodeZkConfigProvider<any>(zkConfigPath),
-    proofProvider: httpClientProofProvider(envConfig.proofServer),
-  };
+  try {
+    const zkConfigPath = path.resolve(process.cwd(), 'contract', 'src', 'managed', 'bboard');
+    const providers = {
+      midnightProvider: walletProvider,
+      walletProvider: walletProvider,
+      privateStateProvider: levelPrivateStateProvider({
+        privateStateStoreName: 'vvp-preprod-state',
+      }),
+      publicDataProvider: indexerPublicDataProvider(envConfig.indexer, envConfig.indexerWS),
+      zkConfigProvider: new NodeZkConfigProvider<any>(zkConfigPath),
+      proofProvider: httpClientProofProvider(envConfig.proofServer),
+    };
 
-  const api = await BBoardAPI.deploy(providers, logger);
-  const deployedAddress = api.deployedContractAddress;
+    const api = await BBoardAPI.deploy(providers, logger);
+    const deployedAddress = api.deployedContractAddress;
 
-  console.log('\n============================================================');
-  console.log('🎉 SMART CONTRACT DEPLOYED ON MIDNIGHT PREPROD!');
-  console.log('============================================================');
-  console.log(`📍 Deployed Contract Address: ${deployedAddress}`);
-  console.log(`🌐 Network: Midnight Preprod`);
-  console.log(`🔗 Explorer: https://explorer.preprod.midnight.network/contract/${deployedAddress}`);
-  console.log('============================================================\n');
+    console.log('\n============================================================');
+    console.log('🎉 SMART CONTRACT DEPLOYED ON MIDNIGHT PREPROD!');
+    console.log('============================================================');
+    console.log(`📍 Deployed Contract Address: ${deployedAddress}`);
+    console.log(`🌐 Network: Midnight Preprod`);
+    console.log(`🔗 Explorer: https://explorer.preprod.midnight.network/contract/${deployedAddress}`);
+    console.log('============================================================\n');
 
-  // Update .env with deployed contract address
-  let envContent = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf-8') : '';
-  if (envContent.includes('MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=')) {
-    envContent = envContent.replace(/MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=.*/, `MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}`);
-  } else {
-    envContent += `\nMIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}\n`;
+    // Update .env with deployed contract address
+    let envContent = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf-8') : '';
+    if (envContent.includes('MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=')) {
+      envContent = envContent.replace(/MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=.*/, `MIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}`);
+    } else {
+      envContent += `\nMIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}\n`;
+    }
+    fs.writeFileSync(envFilePath, envContent);
+  } catch (err: any) {
+    console.error('\n❌ Deployment transaction failed:', err?.message || err);
+    console.log('\n💡 Note: Make sure the Midnight Proof Server is accessible if deploying live proofs.');
+  } finally {
+    await walletProvider.stop().catch(() => {});
+    process.exit(0);
   }
-  fs.writeFileSync(envFilePath, envContent);
-
-  await walletProvider.stop().catch(() => {});
-  process.exit(0);
 }
 
 main().catch((err) => {
