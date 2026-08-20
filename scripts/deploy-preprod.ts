@@ -9,6 +9,7 @@ import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+import { generateDust } from '../bboard-cli/src/generate-dust.js';
 import { type EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
 import * as Rx from 'rxjs';
 import fs from 'fs';
@@ -55,7 +56,7 @@ async function main() {
     proofServer: process.env.PROOF_SERVER_URL || 'http://localhost:6300',
   };
 
-  logger.info('Initializing Midnight Preprod wallet (fast unshielded mode)...');
+  logger.info('Initializing Midnight Preprod wallet...');
   const walletProvider = await MidnightWalletProvider.build(logger, envConfig, seed);
   await walletProvider.start();
 
@@ -63,11 +64,17 @@ async function main() {
   const unshieldedAddress = UnshieldedAddress.codec.encode('preprod', initialState.address);
 
   console.log(`📍 Deployment Wallet Address: ${unshieldedAddress.toString()}`);
-  console.log(`⏳ Checking on-chain balance on Midnight Preprod...`);
+  console.log(`⏳ Synchronizing balance on Midnight Preprod...`);
 
-  // Fast direct balance check
-  const unshieldedState = await Rx.firstValueFrom(walletProvider.wallet.unshielded.state);
+  // Wait for unshielded wallet state emission with funds
   const token = unshieldedToken();
+  const unshieldedState = await Rx.firstValueFrom(
+    walletProvider.wallet.unshielded.state.pipe(
+      Rx.filter((state) => (state.balances[token.raw] ?? 0n) > 0n),
+      Rx.timeout({ each: 15000, with: () => Rx.firstValueFrom(walletProvider.wallet.unshielded.state) }),
+    ),
+  );
+
   const nightBalance = unshieldedState.balances[token.raw] ?? 0n;
 
   if (nightBalance === 0n) {
@@ -84,6 +91,18 @@ async function main() {
   }
 
   console.log(`\n✅ Confirmed Wallet Balance: ${nightBalance.toString()} tNIGHT`);
+
+  // Register UTXOs for DUST generation if needed
+  console.log('⚡ Registering tNIGHT UTXOs for DUST transaction fee generation...');
+  try {
+    const txId = await generateDust(logger, seed, unshieldedState, walletProvider.wallet);
+    if (txId) {
+      console.log(`✅ DUST generation transaction submitted: ${txId}`);
+    }
+  } catch (err: any) {
+    logger.warn(`DUST generation notification: ${err?.message || err}`);
+  }
+
   console.log(`🚀 Compiling ZK Circuit Witnesses and Submitting Transaction to Midnight Preprod...`);
 
   try {
@@ -93,12 +112,15 @@ async function main() {
       walletProvider: walletProvider,
       privateStateProvider: levelPrivateStateProvider({
         privateStateStoreName: 'vvp-preprod-state',
+        accountId: unshieldedAddress.toString(),
+        privateStoragePasswordProvider: () => Promise.resolve('visitor-verification-platform-secure-key-12345'),
       }),
       publicDataProvider: indexerPublicDataProvider(envConfig.indexer, envConfig.indexerWS),
       zkConfigProvider: new NodeZkConfigProvider<any>(zkConfigPath),
       proofProvider: httpClientProofProvider(envConfig.proofServer),
     };
 
+    logger.info('Submitting contract deployment on Midnight Preprod...');
     const api = await BBoardAPI.deploy(providers, logger);
     const deployedAddress = api.deployedContractAddress;
 
@@ -118,9 +140,10 @@ async function main() {
       envContent += `\nMIDNIGHT_DEPLOYED_CONTRACT_ADDRESS=${deployedAddress}\n`;
     }
     fs.writeFileSync(envFilePath, envContent);
+
+    console.log('✅ Updated .env with deployed contract address.');
   } catch (err: any) {
-    console.error('\n❌ Deployment transaction failed:', err?.message || err);
-    console.log('\n💡 Note: Make sure the Midnight Proof Server is accessible if deploying live proofs.');
+    console.error('\n❌ Deployment transaction error:', err?.message || err);
   } finally {
     await walletProvider.stop().catch(() => {});
     process.exit(0);

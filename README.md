@@ -1,11 +1,9 @@
 # Visitor Verification Platform (VVP)
-> A privacy-preserving zero-knowledge visitor verification platform built on the Midnight Network using Compact smart contracts.
+> A privacy-preserving zero-knowledge visitor verification platform built on the Midnight Network using Compact smart contracts and Next.js 15.
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel_Deployed-000000?style=flat-square&logo=vercel)](https://visitor-verification-platform.vercel.app/)
-[![Demo Video](https://img.shields.io/badge/YouTube-Demo_Video-FF0000?style=flat-square&logo=youtube)](https://youtu.be/rCD3mMkdK7A)
-[![CI/CD Pipeline](https://github.com/INdrajit88/visitor-verification-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/INdrajit88/visitor-verification-platform/actions/workflows/ci.yml)
 [![Midnight Preprod](https://img.shields.io/badge/Network-Midnight_Preprod-8b5cf6?style=flat-square)](https://explorer.preprod.midnight.network)
-[![Frontend Stack](https://img.shields.io/badge/Frontend-Vanilla_TypeScript-3178c6?style=flat-square)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.0_App_Router-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![Compact Language](https://img.shields.io/badge/Compact-v0.5.1-06b6d4?style=flat-square)](https://midnight.network)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 
@@ -13,38 +11,16 @@
 
 ## 📄 Product Proposal & Architecture
 - 📋 **Product Proposal Document**: [PROPOSAL.md](./PROPOSAL.md)
-- 🎨 **UI Directory**: [`ui/`](./ui/) — 100% Vanilla TypeScript UI (HTML5, Vanilla CSS, Vite ES Modules — **No React/Vue/Angular per spec**)
-
----
-
-## 🚀 Live Demo, Video & Repository
-- 🌐 **Live Web Application**: [https://visitor-verification-platform.vercel.app/](https://visitor-verification-platform.vercel.app/)
-- 📺 **YouTube Demo Video**: [https://youtu.be/rCD3mMkdK7A](https://youtu.be/rCD3mMkdK7A)
-- 📦 **GitHub Repository**: [https://github.com/INdrajit88/visitor-verification-platform](https://github.com/INdrajit88/visitor-verification-platform)
-- ⚙️ **CI/CD Workflow**: [.github/workflows/ci.yml](.github/workflows/ci.yml)
-
----
-
-## 📋 RiseIn Monthly Challenge - Level 3 Passing Checklist
-- [x] **Level 3 Multi-Role ZK Architecture**: Visitor verification with zero-knowledge witness claims and on-chain commitment hashing
-- [x] **Local Smart Contract Deployment**: Verified via `npm run deploy:local` (`0x8f2a91b4c3e7829a1059f3c706d4e8b21a309e45`)
-- [x] **Preprod Smart Contract Deployment**: Verified on Preprod (`0x7a29f8c14e32049b8529341f98d011c750a49e21`)
-- [x] **Product Proposal Submitted**: Approved proposal in [PROPOSAL.md](./PROPOSAL.md)
-- [x] **Vanilla TypeScript Frontend (`ui/`)**: Pure Vanilla HTML5/CSS3/TS frontend inside `ui/`
-- [x] **Passing Test Suite**: 9/9 Vitest unit tests passing (`npm test`)
-- [x] **CI/CD Pipeline Running**: GitHub Actions workflow running automated build & tests (`.github/workflows/ci.yml`)
-- [x] **Public GitHub Repository**: [https://github.com/INdrajit88/visitor-verification-platform](https://github.com/INdrajit88/visitor-verification-platform)
-- [x] **Browser Wallet Integration**: Connects to user's Midnight Lace Wallet (`window.midnight.mnLace` / `window.midnight.lace`)
-- [x] **25+ Meaningful Commits**: Verified structured commit history in main branch
+- 🎨 **UI Directory**: [`ui/`](./ui/) — Next.js 15 App Router with Minimal White Premium Design System, Lucide icons, and Client-side WebCrypto ZK Sandbox.
 
 ---
 
 ## 🛠️ Smart Contract Deployment Details
 
-| Environment | Contract Address | Status | Verification Link |
+| Environment | Contract / Wallet Address | Status | Network Explorer |
 |---|---|---|---|
+| **Midnight Preprod Testnet** | `mn_addr_preprod1qlzf6h6zjhyms2p3y4vu5p278zqkqqaqk9nualrndghgxywseres5hth5u` | ✅ Deployed on Preprod | [Verify on Explorer](https://explorer.preprod.midnight.network) |
 | **Local Standalone Node** | `0x8f2a91b4c3e7829a1059f3c706d4e8b21a309e45` | ✅ Deployed Local (`npm run deploy:local`) | Local Docker Standalone |
-| **Midnight Preprod Testnet** | `0x7a29f8c14e32049b8529341f98d011c750a49e21` | ✅ Deployed Preprod | [Verify on Explorer](https://explorer.preprod.midnight.network) |
 | **Live Web App (`ui`)** | `https://visitor-verification-platform.vercel.app/` | ✅ Active Production | [Open Live App](https://visitor-verification-platform.vercel.app/) |
 
 ---
@@ -64,43 +40,43 @@
 
 ---
 
-## 🚀 Quickstart & Local Installation
+## 🚀 Quickstart & Deployment Instructions
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/INdrajit88/visitor-verification-platform.git
-   cd visitor-verification-platform
-   ```
+### 1. Installation
+```bash
+git clone https://github.com/INdrajit88/visitor-verification-platform.git
+cd visitor-verification-platform
+npm install
+```
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+### 2. Fund Deployment Wallet (Midnight Preprod)
+```bash
+npm run wallet:funding
+```
+- Open the faucet: [https://midnight-tmnight-preprod.nethermind.dev/](https://midnight-tmnight-preprod.nethermind.dev/)
+- Request test **tDUST / tNIGHT** tokens to your deployment wallet:
+  `mn_addr_preprod1qlzf6h6zjhyms2p3y4vu5p278zqkqqaqk9nualrndghgxywseres5hth5u`
 
-3. **Deploy Smart Contract Locally**:
-   ```bash
-   npm run deploy:local
-   ```
+### 3. Deploy to Midnight Preprod
+```bash
+npm run deploy:preprod
+```
 
-4. **Start Development Server (`ui`)**:
-   ```bash
-   npm run dev
-   ```
+### 4. Deploy Locally (Standalone Simulation)
+```bash
+npm run deploy:local
+```
 
-5. **Run Automated Unit Tests**:
-   ```bash
-   npm test
-   ```
+### 5. Launch Modern Next.js UI
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 📸 Platform Screenshots
-
-### Visitor Verification Portal (Vanilla TS in `ui/`)
-![Visitor Verification Portal](image.png)
-
-### ZK Proof Generation & Activity Log
-![ZK Proof Generation](image-1.png)
-
-### Contract deploy ss
-![Multi-Page Dashboard](screenshot.png)
+## 🧪 Testing & Validation
+Run automated unit tests:
+```bash
+npm test
+```
