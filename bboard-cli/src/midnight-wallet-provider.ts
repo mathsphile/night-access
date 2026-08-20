@@ -50,7 +50,7 @@ type UnshieldedKeystore = {
   signData(payload: Uint8Array): string;
 };
 
-const deriveKeyForRole = (seed: string, role: number) => {
+const deriveKeyForRole = (seed: string, role: any) => {
   const seedBuffer = Buffer.from(seed, 'hex');
   const hdWalletResult = HDWallet.fromSeed(seedBuffer);
   if (hdWalletResult.type !== 'seedOk') {
