@@ -1,81 +1,145 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
+import { Code2, Copy, CheckCircle2, Shield, Cpu } from 'lucide-react';
 
 export default function InspectorPage() {
   const { showToast } = useApp();
+  const [copied, setCopied] = useState(false);
 
-  const codeString = `pragma language_version >= 0.20;
+  const circuitCode = `// contracts/bboard.compact
+// Midnight Zero-Knowledge Visitor Verification Circuit
+
+pragma language_version >= 0.20.0;
 
 import CompactStandardLibrary;
 
-export enum State { vacant, occupied }
-
-export ledger currentVerifier: Bytes<32>;
-export ledger lastCommitment: Bytes<32>;
-export ledger totalVisitors: Uint<32>;
-
-witness getPasscodeWitness(verifier: Bytes<32>): Bytes<32>;
-
-export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
-    // Ensure the target venue verifier matches current on-chain state
-    assert verifier == currentVerifier;
-
-    // Retrieve private passcode from local witness runtime
-    const witnessPasscode = getPasscodeWitness(verifier);
-
-    // Compute cryptographic commitment hash in Zero-Knowledge
-    const computedCommitment = persistent_hash<Vector<3, Bytes<32>>>(
-        [witnessPasscode, verifier, salt]
-    );
-
-    // Disclose commitment hash to ledger and increment visitor count
-    lastCommitment = computedCommitment;
-    totalVisitors = totalVisitors + 1;
+export enum AccessTier {
+    Standard,
+    VIP,
+    Staff
 }
 
-export circuit resetVerifier(newVerifier: Bytes<32>): [] {
-    currentVerifier = newVerifier;
+export ledger activeVenueId: Cell<Bytes<32>>;
+export ledger totalVerifiedVisitors: Counter;
+export ledger latestCommitment: Cell<Bytes<32>>;
+
+witness getVisitorPasscode(verifier: Bytes<32>): Bytes<32>;
+
+export circuit verifyVisitorAccess(
+    targetVerifier: Bytes<32>,
+    nonceSalt: Bytes<32>,
+    expectedCommitment: Bytes<32>
+): [] {
+    // Retrieve secret passcode witness locally from visitor runtime
+    const witnessSecret = getVisitorPasscode(targetVerifier);
+
+    // Compute cryptographic commitment in Zero-Knowledge
+    const calculatedHash = persistent_hash<Vector<3, Bytes<32>>>([
+        witnessSecret,
+        targetVerifier,
+        nonceSalt
+    ]);
+
+    // Assert commitment validity without revealing witnessSecret
+    assert calculatedHash == expectedCommitment
+        "Invalid visitor credentials for requested venue";
+
+    // Atomically increment verified count and record public commitment
+    totalVerifiedVisitors.increment(1);
+    latestCommitment.write(expectedCommitment);
 }`;
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(codeString);
-    showToast('Circuit code copied to clipboard!', 'success');
+  const copyCode = () => {
+    navigator.clipboard.writeText(circuitCode);
+    setCopied(true);
+    showToast('Circuit code copied to clipboard', 'info');
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-          Compact Zero-Knowledge <span className="gradient-text">Circuit Inspector</span>
-        </h1>
-        <p style={{ color: 'var(--slate-400)', fontSize: '0.92rem', marginTop: '0.25rem' }}>
-          Inspect the Compact smart contract syntax, private witness logic, and verification constraints.
-        </p>
-      </div>
-
-      <div className="card card-glow-pink">
-        <div className="card-header">
-          <div className="card-title">
-            <div className="card-icon">🔍</div>
-            <span>Compact ZK Circuit (contract/src/bboard.compact)</span>
-          </div>
-          <button
-            onClick={handleCopy}
-            className="btn-secondary"
-            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
-          >
-            📋 Copy Code
-          </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            Compact Circuit Inspector
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.2rem' }}>
+            Inspect the underlying Zero-Knowledge smart contract deployed to the Midnight VM.
+          </p>
         </div>
 
-        <p style={{ color: 'var(--slate-400)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-          The Compact circuit below uses multi-input persistent hashing to verify visitor credentials against registered venue parameters without exposing private witnesses.
-        </p>
-
-        <pre className="code-block"><code>{codeString}</code></pre>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={copyCode}
+          style={{ padding: '0.55rem 1.15rem', fontSize: '0.85rem' }}
+        >
+          {copied ? <CheckCircle2 size={14} color="#16a34a" /> : <Copy size={14} />}
+          <span>{copied ? 'Copied' : 'Copy Compact Contract'}</span>
+        </button>
       </div>
-    </>
+
+      {/* Code Inspector Card */}
+      <div className="card">
+        <div className="card-header">
+          <div className="card-title">
+            <div className="card-icon">
+              <Code2 size={16} />
+            </div>
+            <span>bboard.compact</span>
+          </div>
+          <span className="card-badge">COMPACT v0.20</span>
+        </div>
+
+        <pre className="code-block" style={{ fontSize: '0.84rem', lineHeight: 1.65 }}>
+          <code>{circuitCode}</code>
+        </pre>
+      </div>
+
+      {/* Explanatory Specs Cards */}
+      <div className="stats-grid" style={{ margin: 0 }}>
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="stat-label">Witness Function</span>
+            <Shield size={16} color="var(--text-muted)" />
+          </div>
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            getVisitorPasscode()
+          </div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+            Never broadcast over network; evaluated locally in WASM.
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="stat-label">ZK Hash Function</span>
+            <Cpu size={16} color="var(--text-muted)" />
+          </div>
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            persistent_hash&lt;Vector&gt;
+          </div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+            Zero-knowledge friendly Poseidon hash algorithm.
+          </div>
+        </div>
+
+        <div className="stat-card">
+          <div className="stat-header">
+            <span className="stat-label">Ledger State</span>
+            <Code2 size={16} color="var(--text-muted)" />
+          </div>
+          <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+            Cell&lt;Bytes&lt;32&gt;&gt;
+          </div>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
+            Atomic commitment updates verified by Midnight nodes.
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

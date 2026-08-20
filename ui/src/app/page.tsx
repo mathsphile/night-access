@@ -4,6 +4,23 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { sha256Hex } from '@/lib/zk';
+import {
+  Shield,
+  Zap,
+  Lock,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  XCircle,
+  Code2,
+  Building2,
+  Activity,
+  Globe,
+  Sliders,
+  ChevronDown,
+  Plus,
+  Minus,
+} from 'lucide-react';
 
 export default function HomePage() {
   const { visitorCount, lastCommitment, venueId, blockHeight, showToast } = useApp();
@@ -19,84 +36,87 @@ export default function HomePage() {
 
     // Step 1: Witness Input
     setSimStep(1);
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => setTimeout(r, 350));
 
     // Step 2: Compact Circuit
     setSimStep(2);
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 450));
 
     // Step 3: ZK Proof Generation
     setSimStep(3);
     const hash = await sha256Hex(simPasscode + '_midnight_salt');
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 400));
 
     // Step 4: On-Chain Commitment
     setSimStep(4);
-    showToast(`Zero-Knowledge Proof Verified! Commitment: ${hash.substring(0, 10)}...`, 'success');
+    showToast(`Proof verified. Commitment: ${hash.substring(0, 12)}...`, 'success');
     setIsSimulating(false);
   };
 
   const faqs = [
     {
       q: 'How does Zero-Knowledge verification protect visitor credentials?',
-      a: 'The Compact smart contract verifies that a visitor possesses a valid venue passcode without requiring the visitor to transmit or reveal the passcode on-chain. Cryptographic witness proofs are computed client-side, ensuring 100% data privacy.',
+      a: 'The Compact smart contract verifies that a visitor holds a valid venue credential without requiring them to transmit or reveal the plaintext passcode on-chain. Cryptographic witness proofs are computed client-side, ensuring mathematical privacy.',
     },
     {
       q: 'What is the role of the Midnight Proof Server?',
-      a: 'The Proof Server translates Compact circuits into Halo2/KZG zero-knowledge proofs. It runs in browser WASM or standalone Docker environments, generating sub-second proofs without storing private state.',
+      a: 'The Proof Server translates Compact circuits into Halo2/KZG zero-knowledge proofs. It runs in browser WASM or containerized environments, generating sub-second proofs without storing private state.',
     },
     {
       q: 'How does Midnight Lace Wallet integration work?',
-      a: 'The dApp leverages the official Midnight DApp Connector API (`window.midnight.mnLace`). Visitors sign commitments with their private keys, keeping identity attributes strictly off-chain.',
+      a: 'The dApp interfaces with the official Midnight DApp Connector API (`window.midnight.mnLace`). Visitors sign commitments with their private keys, keeping identity attributes strictly off-chain.',
     },
     {
       q: 'Can venues dynamically configure access rules and verifier keys?',
-      a: 'Yes. Venue administrators can update on-chain verifier IDs via the Admin Console, allowing instant gate rotation, VIP tier assignment, and event-based admissions.',
+      a: 'Yes. Venue administrators can update on-chain verifier IDs via the Admin Console, enabling instantaneous gate rotation, VIP tier assignment, and event-based admissions.',
     },
   ];
 
   return (
     <>
       {/* --------------------------------------------------------------------------
-          Hero-01 Section (Landing-01 Language)
+          Hero Section
           -------------------------------------------------------------------------- */}
       <section className="hero-section">
         <Link href="/inspector" className="hero-pill">
-          <span style={{ display: 'inline-block', animation: 'pulseGlow 2s infinite ease-in-out' }}>✨</span>
-          <span>Powered by Midnight Network • Compact ZK Circuit 4.0</span>
-          <span style={{ color: 'var(--slate-400)', fontSize: '0.8rem' }}>→</span>
+          <Sparkles size={14} color="#09090b" />
+          <span>Powered by Midnight Network • Compact ZK Circuits</span>
+          <ArrowRight size={13} color="var(--text-muted)" />
         </Link>
 
         <h1 className="hero-heading">
-          The Zero-Knowledge <br />
-          <span className="gradient-text">Visitor Verification Platform</span>
+          Zero-knowledge access control <br />
+          <span className="accent-text">for the physical and digital world.</span>
         </h1>
 
         <p className="hero-subtext">
-          Enterprise access control engineered with mathematical privacy. Verify admissions, VIP credentials, and venue access in zero-knowledge without disclosing passcodes or PII on-chain.
+          Enterprise verification engineered with mathematical privacy. Verify admissions, VIP credentials, and venue access in zero-knowledge without disclosing passcodes or PII on-chain.
         </p>
 
         <div className="cta-group">
           <Link href="/dashboard" className="btn-primary">
-            <span>🚀</span> Explore Dashboard
+            <span>Explore Dashboard</span>
+            <ArrowRight size={14} />
           </Link>
           <Link href="/checkin" className="btn-secondary">
-            <span>⚡</span> Launch Check-In Portal
+            <span>Launch Check-In</span>
           </Link>
         </div>
 
-        {/* Live Interactive Simulator Sandbox inside Hero Frame */}
+        {/* Live Interactive Sandbox Card inside Hero */}
         <div style={{ marginTop: '3.5rem', textAlign: 'left' }}>
-          <div className="card card-glow-pink">
+          <div className="card">
             <div className="card-header">
               <div className="card-title">
-                <div className="card-icon">⚡</div>
-                <span>Interactive Zero-Knowledge Circuit Playground</span>
+                <div className="card-icon">
+                  <Zap size={16} />
+                </div>
+                <span>Interactive Zero-Knowledge Circuit Sandbox</span>
               </div>
-              <span className="card-badge">LIVE SANDBOX</span>
+              <span className="card-badge">LIVE PLAYGROUND</span>
             </div>
 
-            <p style={{ color: 'var(--slate-400)', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', marginBottom: '1.25rem' }}>
               Test private witness verification. Enter a sample passcode below to execute the 4-stage Compact ZK circuit pipeline in real-time.
             </p>
 
@@ -110,7 +130,8 @@ export default function HomePage() {
                   placeholder="Enter private passcode witness..."
                 />
                 <button type="submit" className="sim-btn" disabled={isSimulating}>
-                  <span>⚡</span> {isSimulating ? 'Computing Proof...' : 'Run ZK Circuit'}
+                  <Zap size={14} />
+                  <span>{isSimulating ? 'Computing Proof...' : 'Run Circuit'}</span>
                 </button>
               </div>
             </form>
@@ -145,116 +166,118 @@ export default function HomePage() {
       </section>
 
       {/* --------------------------------------------------------------------------
-          Social Proof & Protocol Trust Marquee
+          Trust Strip
           -------------------------------------------------------------------------- */}
       <section className="trust-strip">
         <div className="trust-title">Cryptographic Foundations & Ecosystem Standards</div>
         <div className="logo-grid">
           <div className="logo-badge-item">
-            <span>🛡️</span> Midnight Network
+            <Shield size={14} />
+            <span>Midnight Network</span>
           </div>
           <div className="logo-badge-item">
-            <span>⚡</span> Compact Smart Contracts
+            <Code2 size={14} />
+            <span>Compact Smart Contracts</span>
           </div>
           <div className="logo-badge-item">
-            <span>🔒</span> Halo2 / KZG SNARKs
+            <Lock size={14} />
+            <span>Halo2 / KZG SNARKs</span>
           </div>
           <div className="logo-badge-item">
-            <span>💼</span> Lace Wallet DApp Connector
+            <Globe size={14} />
+            <span>Cardano Ecosystem</span>
           </div>
           <div className="logo-badge-item">
-            <span>🌐</span> Cardano Ecosystem
-          </div>
-          <div className="logo-badge-item">
-            <span>🔑</span> Web Crypto API
+            <Activity size={14} />
+            <span>Sub-Second Proving</span>
           </div>
         </div>
       </section>
 
       {/* --------------------------------------------------------------------------
-          Stats-01 Ticker Section
+          Stats-01 Metrics Ticker
           -------------------------------------------------------------------------- */}
       <section className="stats-grid">
         <div className="stat-card">
           <div className="stat-header">
             <span className="stat-label">Total Verified Accesses</span>
-            <div className="stat-icon-wrap">🛡️</div>
+            <Shield size={16} color="var(--text-muted)" />
           </div>
           <div className="stat-value">{visitorCount.toLocaleString()}</div>
           <div className="stat-trend">
-            <span>↑ +18.4%</span>
-            <span style={{ color: 'var(--slate-500)', fontWeight: 500 }}>active today</span>
+            <CheckCircle2 size={13} />
+            <span>+18.4% active today</span>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-header">
             <span className="stat-label">Avg Prover Latency</span>
-            <div className="stat-icon-wrap">⚡</div>
+            <Zap size={16} color="var(--text-muted)" />
           </div>
           <div className="stat-value">
-            385<span style={{ fontSize: '1.2rem', color: 'var(--cyan-400)' }}>ms</span>
+            385<span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>ms</span>
           </div>
           <div className="stat-trend">
-            <span>⚡ Sub-second</span>
-            <span style={{ color: 'var(--slate-500)', fontWeight: 500 }}>ZK-SNARK proving</span>
+            <Zap size={13} />
+            <span>Sub-second ZK proving</span>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-header">
             <span className="stat-label">Data Privacy Level</span>
-            <div className="stat-icon-wrap">🔒</div>
+            <Lock size={16} color="var(--text-muted)" />
           </div>
           <div className="stat-value">
-            100<span style={{ fontSize: '1.2rem', color: 'var(--watermelon-400)' }}>%</span>
+            100<span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>%</span>
           </div>
           <div className="stat-trend">
-            <span>✓ Zero leakage</span>
-            <span style={{ color: 'var(--slate-500)', fontWeight: 500 }}>no raw passcodes stored</span>
+            <CheckCircle2 size={13} />
+            <span>Zero raw secrets stored</span>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-header">
             <span className="stat-label">Midnight Preprod State</span>
-            <div className="stat-icon-wrap">🌐</div>
+            <Globe size={16} color="var(--text-muted)" />
           </div>
-          <div className="stat-value" style={{ fontSize: '1.8rem', color: 'var(--emerald-400)' }}>
-            #{blockHeight.toLocaleString()}
-          </div>
+          <div className="stat-value">#{blockHeight.toLocaleString()}</div>
           <div className="stat-trend">
-            <span className="status-dot" style={{ marginRight: '4px' }}></span>
+            <span className="status-dot"></span>
             <span>Node Synchronized</span>
           </div>
         </div>
       </section>
 
       {/* --------------------------------------------------------------------------
-          Feature-01 Bento Grid Section
+          Bento Grid Feature Section
           -------------------------------------------------------------------------- */}
-      <section style={{ margin: '4rem 0 2rem' }}>
+      <section style={{ margin: '3.5rem 0 2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.03em' }}>
-            Built for Next-Generation <span className="gradient-text">Physical & Digital Venues</span>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+            Engineered for physical and digital venues
           </h2>
-          <p style={{ color: 'var(--slate-400)', fontSize: '1rem', marginTop: '0.5rem', maxWidth: '650px', marginLeft: 'auto', marginRight: 'auto' }}>
-            A modular zero-knowledge verification architecture designed for stadiums, conferences, corporate headquarters, and high-security facilities.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginTop: '0.4rem', maxWidth: '580px', marginLeft: 'auto', marginRight: 'auto' }}>
+            A modular zero-knowledge verification architecture designed for stadiums, conferences, corporate facilities, and private spaces.
           </p>
         </div>
 
         <div className="bento-grid">
-          {/* Bento Card 1: Private Witness Protection */}
-          <div className="card bento-col-8 card-glow-pink">
+          {/* Card 1: Private Witness Protection */}
+          <div className="card bento-col-8">
             <div className="card-header">
               <div className="card-title">
-                <div className="card-icon">🛡️</div>
+                <div className="card-icon">
+                  <Shield size={16} />
+                </div>
                 <span>Private Witness Protection & Local Hashing</span>
               </div>
               <span className="card-badge">CLIENT-SIDE PRIVACY</span>
             </div>
-            <p style={{ color: 'var(--slate-400)', fontSize: '0.92rem', marginBottom: '1.25rem' }}>
-              Visitor credentials, passcodes, and nonces are processed exclusively within the visitor's secure local runtime. Only cryptographic commitments are broadcast to the Midnight ledger.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginBottom: '1rem' }}>
+              Visitor credentials, passcodes, and nonces are processed exclusively within the visitor&apos;s secure local runtime. Only cryptographic commitments are broadcast to the Midnight ledger.
             </p>
             <pre className="code-block"><code>{`// contracts/bboard.compact
 witness getPasscode(verifier: Bytes<32>): Bytes<32>;
@@ -267,88 +290,91 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
 }`}</code></pre>
           </div>
 
-          {/* Bento Card 2: Venue Gate Manager */}
-          <div className="card bento-col-4 card-glow-cyan">
+          {/* Card 2: Venue Gate Manager */}
+          <div className="card bento-col-4">
             <div className="card-header">
               <div className="card-title">
-                <div className="card-icon">🏛️</div>
+                <div className="card-icon">
+                  <Building2 size={16} />
+                </div>
                 <span>Venue Gate Manager</span>
               </div>
             </div>
-            <p style={{ color: 'var(--slate-400)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-              Configure individual gates, VIP access tiers, and on-chain verification verifier IDs dynamically.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', marginBottom: '1rem' }}>
+              Configure gates, VIP access tiers, and on-chain verification parameters dynamically.
             </p>
             <div className="status-list">
               <div className="status-box">
                 <div className="status-box-header">Active Venue ID</div>
-                <div className="status-box-value" style={{ color: 'var(--watermelon-400)' }}>
-                  {venueId}
-                </div>
+                <div className="status-box-value">{venueId}</div>
               </div>
               <div className="status-box">
-                <div className="status-box-header">Verification Status</div>
-                <div className="status-box-value" style={{ color: 'var(--emerald-400)' }}>
+                <div className="status-box-header">Verification Policy</div>
+                <div className="status-box-value" style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
                   ● STRICT POLICY ACTIVE
                 </div>
               </div>
             </div>
             <div style={{ marginTop: '1.25rem' }}>
-              <Link href="/admin" className="btn-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.88rem' }}>
-                Manage Gate Settings →
+              <Link href="/admin" className="btn-secondary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.84rem' }}>
+                <span>Manage Gate Settings</span>
+                <ArrowRight size={13} />
               </Link>
             </div>
           </div>
 
-          {/* Bento Card 3: Operations Dashboard Preview */}
-          <div className="card bento-col-6 card-glow-emerald">
+          {/* Card 3: Operations Dashboard Preview */}
+          <div className="card bento-col-6">
             <div className="card-header">
               <div className="card-title">
-                <div className="card-icon">📊</div>
-                <span>Operations Dashboard</span>
+                <div className="card-icon">
+                  <Activity size={16} />
+                </div>
+                <span>Operations Telemetry</span>
               </div>
-              <Link href="/dashboard" style={{ color: 'var(--watermelon-400)', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
-                View Full Dashboard →
+              <Link href="/dashboard" style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600, textDecoration: 'none' }}>
+                Open Dashboard →
               </Link>
             </div>
-            <p style={{ color: 'var(--slate-400)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', marginBottom: '1rem' }}>
               Monitor live visitor streams, ZK-SNARK prover latency graphs, and cryptographic gas consumption in real-time.
             </p>
             <div className="status-list">
               <div className="status-box">
                 <div className="status-box-header">Average Execution Time</div>
-                <div className="status-box-value" style={{ color: 'var(--emerald-400)' }}>385ms (Sub-Second ZK Proving)</div>
+                <div className="status-box-value">385ms (Sub-Second ZK Proving)</div>
               </div>
               <div className="status-box">
                 <div className="status-box-header">Active Venue Gates</div>
-                <div className="status-box-value" style={{ color: 'var(--cyan-400)' }}>3 Verified Entry Points</div>
+                <div className="status-box-value">3 Verified Entry Points</div>
               </div>
             </div>
           </div>
 
-          {/* Bento Card 4: Network Explorer */}
-          <div className="card bento-col-6 card-glow-cyan">
+          {/* Card 4: Network Explorer */}
+          <div className="card bento-col-6">
             <div className="card-header">
               <div className="card-title">
-                <div className="card-icon">🌐</div>
-                <span>Midnight Network Explorer</span>
+                <div className="card-icon">
+                  <Globe size={16} />
+                </div>
+                <span>Midnight Network State</span>
               </div>
-              <Link href="/explorer" style={{ color: 'var(--cyan-400)', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
-                Network State →
+              <Link href="/explorer" style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600, textDecoration: 'none' }}>
+                View Diagnostics →
               </Link>
             </div>
-            <p style={{ color: 'var(--slate-400)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-              Seamless integration with Midnight Preprod indexer and Proof Server for instantaneous ZK validation.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', marginBottom: '1rem' }}>
+              Integration with Midnight Preprod indexer and Proof Server for instantaneous ZK validation.
             </p>
             <div className="status-list">
               <div className="status-box">
                 <div className="status-box-header">Last Verified Commitment</div>
-                <div className="status-box-value" style={{ color: 'var(--cyan-400)' }}>
-                  {lastCommitment}
-                </div>
+                <div className="status-box-value">{lastCommitment}</div>
               </div>
               <div className="status-box">
                 <div className="status-box-header">Contract Address</div>
-                <div className="status-box-value" style={{ color: 'var(--slate-300)', fontSize: '0.88rem' }}>
+                <div className="status-box-value" style={{ fontSize: '0.82rem' }}>
                   0x7a29f8c14e32049b8529341f98d011c750a49e21
                 </div>
               </div>
@@ -358,14 +384,14 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
       </section>
 
       {/* --------------------------------------------------------------------------
-          Feature Comparison Section (Why Zero-Knowledge Access)
+          Comparison Table Section
           -------------------------------------------------------------------------- */}
-      <section style={{ margin: '4.5rem 0' }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-            Why <span className="gradient-text">Zero-Knowledge Access</span> Wins
+      <section style={{ margin: '4rem 0' }}>
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+          <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            Why zero-knowledge verification
           </h2>
-          <p style={{ color: 'var(--slate-400)', fontSize: '0.95rem', marginTop: '0.4rem' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.35rem' }}>
             Comparing traditional centralized ticketing vs. Midnight cryptographic verification.
           </p>
         </div>
@@ -374,36 +400,70 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
           <table className="comparison-table">
             <thead>
               <tr>
-                <th style={{ width: '35%' }}>Feature Metric</th>
-                <th style={{ color: 'var(--watermelon-400)' }}>Traditional Access Systems</th>
-                <th style={{ color: 'var(--emerald-400)' }}>Visitor Verification Platform</th>
+                <th style={{ width: '35%' }}>Feature Dimension</th>
+                <th>Traditional Access Systems</th>
+                <th style={{ color: 'var(--text-primary)' }}>Midnight ZK Platform</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>Private Credential Exposure</td>
-                <td style={{ color: 'var(--watermelon-400)' }}>❌ Raw barcodes/passcodes sent to servers</td>
-                <td style={{ color: 'var(--emerald-400)', fontWeight: 700 }}>✓ 100% Zero-Disclosure on device</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Credential Privacy</td>
+                <td style={{ color: 'var(--accent-rose)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <XCircle size={15} /> Plaintext passcodes sent to servers
+                </td>
+                <td style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <CheckCircle2 size={15} /> 100% Zero-Disclosure on device
+                  </span>
+                </td>
               </tr>
               <tr>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>Database Leak Risk</td>
-                <td style={{ color: 'var(--watermelon-400)' }}>❌ Single point of failure central database</td>
-                <td style={{ color: 'var(--emerald-400)', fontWeight: 700 }}>✓ Cryptographic commitments only</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Database Leak Risk</td>
+                <td style={{ color: 'var(--accent-rose)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <XCircle size={15} /> Single point of failure database
+                  </span>
+                </td>
+                <td style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <CheckCircle2 size={15} /> Cryptographic commitments only
+                  </span>
+                </td>
               </tr>
               <tr>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>Verification Latency</td>
-                <td style={{ color: 'var(--slate-400)' }}>1.5s – 3.0s cloud API lookups</td>
-                <td style={{ color: 'var(--emerald-400)', fontWeight: 700 }}>✓ &lt;400ms Compact ZK proof</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Verification Latency</td>
+                <td>1.5s – 3.0s cloud API lookups</td>
+                <td style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <CheckCircle2 size={15} /> &lt;400ms Compact ZK proof
+                  </span>
+                </td>
               </tr>
               <tr>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>On-Chain Tamper Resistance</td>
-                <td style={{ color: 'var(--watermelon-400)' }}>❌ Replay attacks & ticket forgery</td>
-                <td style={{ color: 'var(--emerald-400)', fontWeight: 700 }}>✓ Midnight blockchain consensus</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Forgery Resistance</td>
+                <td style={{ color: 'var(--accent-rose)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <XCircle size={15} /> Replay attacks & copyable QR codes
+                  </span>
+                </td>
+                <td style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <CheckCircle2 size={15} /> Midnight blockchain consensus
+                  </span>
+                </td>
               </tr>
               <tr>
-                <td style={{ fontWeight: 700, color: '#ffffff' }}>GDPR & Privacy Compliance</td>
-                <td style={{ color: 'var(--watermelon-400)' }}>❌ Complex PII storage obligations</td>
-                <td style={{ color: 'var(--emerald-400)', fontWeight: 700 }}>✓ Privacy by Mathematical Design</td>
+                <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>Data Compliance</td>
+                <td style={{ color: 'var(--accent-rose)' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <XCircle size={15} /> Heavy PII compliance liability
+                  </span>
+                </td>
+                <td style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <CheckCircle2 size={15} /> Privacy by mathematical design
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -411,19 +471,19 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
       </section>
 
       {/* --------------------------------------------------------------------------
-          FAQ-01 Section
+          FAQ Accordion Section
           -------------------------------------------------------------------------- */}
-      <section style={{ margin: '4.5rem 0' }}>
+      <section style={{ margin: '4rem 0' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-            Frequently Asked <span className="gradient-text">Questions</span>
+          <h2 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            Frequently asked questions
           </h2>
-          <p style={{ color: 'var(--slate-400)', fontSize: '0.95rem', marginTop: '0.4rem' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', marginTop: '0.35rem' }}>
             Everything you need to know about Midnight Network Zero-Knowledge access control.
           </p>
         </div>
 
-        <div className="faq-grid" style={{ maxWidth: '820px', margin: '0 auto' }}>
+        <div className="faq-grid" style={{ maxWidth: '780px', margin: '0 auto' }}>
           {faqs.map((faq, idx) => (
             <div
               key={idx}
@@ -432,7 +492,9 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
             >
               <div className="faq-question">
                 <span>{faq.q}</span>
-                <span className="faq-toggle-icon">{openFaq === idx ? '−' : '+'}</span>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  {openFaq === idx ? <Minus size={15} /> : <Plus size={15} />}
+                </span>
               </div>
               {openFaq === idx && (
                 <div className="faq-answer">
@@ -445,36 +507,36 @@ export circuit verifyVisitor(verifier: Bytes<32>, salt: Bytes<32>): [] {
       </section>
 
       {/* --------------------------------------------------------------------------
-          CTA-01 Section
+          CTA Section
           -------------------------------------------------------------------------- */}
       <section style={{ marginTop: '4rem' }}>
         <div
           className="card"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,51,102,0.15), rgba(6,182,212,0.15))',
-            borderColor: 'rgba(255,51,102,0.35)',
             textAlign: 'center',
-            padding: '4rem 2rem',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+            padding: '3.5rem 2rem',
+            background: 'var(--bg-subtle)',
+            border: '1px solid var(--border-default)',
           }}
         >
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: 'var(--emerald-400)', padding: '0.35rem 0.9rem', borderRadius: 'var(--radius-full)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '1.25rem' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', background: '#ffffff', border: '1px solid var(--border-default)', color: 'var(--text-secondary)', padding: '0.3rem 0.8rem', borderRadius: 'var(--radius-full)', fontSize: '0.78rem', fontWeight: 600, marginBottom: '1.25rem' }}>
             <span className="status-dot"></span>
             <span>Production Ready on Midnight Preprod</span>
           </div>
 
-          <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#ffffff', marginBottom: '1rem', letterSpacing: '-0.03em' }}>
-            Ready to Deploy Privacy-Preserving Access Control?
+          <h2 style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.75rem', letterSpacing: '-0.03em' }}>
+            Ready to deploy privacy-preserving access?
           </h2>
-          <p style={{ color: 'var(--slate-300)', fontSize: '1.1rem', maxWidth: '720px', margin: '0 auto 2.25rem', lineHeight: 1.6 }}>
-            Launch visitor check-in, configure venue policies, and monitor real-time ZK circuits with the Watermelon UI Next.js app.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto 2rem', lineHeight: 1.55 }}>
+            Launch visitor check-in, configure venue policies, and monitor real-time ZK circuits with the minimal Next.js app.
           </p>
           <div className="cta-group">
             <Link href="/dashboard" className="btn-primary">
-              <span>📊</span> Launch Dashboard
+              <span>Launch Dashboard</span>
+              <ArrowRight size={14} />
             </Link>
             <Link href="/checkin" className="btn-secondary">
-              <span>🔑</span> Perform Check-In
+              <span>Perform Check-In</span>
             </Link>
           </div>
         </div>

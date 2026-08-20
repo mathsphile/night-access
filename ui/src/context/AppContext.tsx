@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { sha256Hex, VisitorRecord } from '@/lib/zk';
 
-interface ToastItem {
+export interface ToastItem {
   id: string;
   message: string;
   type: 'success' | 'error' | 'info';
@@ -22,7 +22,7 @@ interface WindowMidnight {
   };
 }
 
-interface AppContextType {
+export interface AppContextType {
   visitorCount: number;
   lastCommitment: string;
   venueId: string;
@@ -34,6 +34,7 @@ interface AppContextType {
   toasts: ToastItem[];
   setIsCmdOpen: (open: boolean) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  removeToast: (id: string) => void;
   toggleWallet: () => Promise<void>;
   updateVenueId: (newVenue: string) => void;
   recordCheckIn: (venue: string, passcode: string) => Promise<string>;
@@ -149,6 +150,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, 4000);
   };
 
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
   const toggleWallet = async () => {
     if (isWalletConnected) {
       setIsWalletConnected(false);
@@ -163,7 +168,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const laceProvider = windowMidnight.midnight?.mnLace || windowMidnight.midnight?.lace;
 
     if (!laceProvider) {
-      // Connect developer preview demo account if browser extension is not yet installed
+      // Connect developer preview demo account if browser extension is not installed
       const demoAddr = '0x37a9f810e201b48e9192410a8d71029c';
       setIsWalletConnected(true);
       setWalletAddress(demoAddr);
@@ -238,6 +243,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         toasts,
         setIsCmdOpen,
         showToast,
+        removeToast,
         toggleWallet,
         updateVenueId,
         recordCheckIn,
