@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visitor Verification Platform | Zero-Knowledge Access Control</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .hero-section {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--amber-100);
+      border: 1px solid var(--amber-400);
+      color: var(--amber-700);
+      padding: 0.45rem 1.1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-heading {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-heading span {
+      background: linear-gradient(135deg, var(--amber-500), var(--amber-700));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtext {
+      font-size: 1.15rem;
+      color: var(--slate-600);
+      line-height: 1.6;
+      margin-bottom: 2.25rem;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-primary {
+      padding: 0.95rem 2rem;
+      background: linear-gradient(135deg, var(--amber-500), var(--amber-600));
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      padding: 0.95rem 2rem;
+      background: #ffffff;
+      border: 1.5px solid var(--amber-400);
+      color: var(--amber-700);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1rem;
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--amber-50);
+      transform: translateY(-2px);
+    }
+
+    /* Workflow Diagram */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin: 3.5rem 0;
+    }
+
+    @media (max-width: 900px) {
+      .workflow-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .workflow-grid { grid-template-columns: 1fr; }
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid var(--border-amber);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--amber-400);
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: var(--amber-500);
+      color: #ffffff;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 0.4rem;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--slate-600);
+      line-height: 1.5;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/index.html" class="brand">
+        <div class="brand-title">Visitor Verification</div>
+      </a>
+
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link active">Home</a>
+        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
+        <a href="/admin.html" class="nav-link">Venue Admin</a>
+        <a href="/inspector.html" class="nav-link">ZK Inspector</a>
+        <a href="/explorer.html" class="nav-link">Explorer State</a>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="network-badge">
+          <div class="status-dot"></div>
+          Midnight Preprod
+        </div>
+        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="animated-entry">
+    <section class="hero-section">
+      <div class="hero-badge">
+        <span>🛡️</span> Zero-Knowledge Enterprise Access Control
+      </div>
+      <h1 class="hero-heading">
+        Privacy-Preserving <span>Visitor Verification Platform</span>
+      </h1>
+      <p class="hero-subtext">
+        Verify venue access authorization in zero-knowledge. Visitors prove possession of a valid venue passcode and entropy nonce using Compact ZK circuits without disclosing secrets or raw credentials on-chain.
+      </p>
+      <div class="cta-buttons">
+        <a href="/checkin.html" class="btn-primary">Launch Check-In Portal →</a>
+        <a href="/admin.html" class="btn-secondary">Venue Admin Console</a>
+      </div>
+    </section>
+
+    <!-- ZK Proof Workflow Steps -->
+    <section>
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--slate-900);">Zero-Knowledge Verification Pipeline</h2>
+        <p style="color: var(--slate-600); font-size: 0.95rem;">Private execution engine with verifiable on-chain commitments</p>
+      </div>
+
+      <div class="workflow-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">Private Witness Inputs</div>
+          <div class="step-desc">Passcode witness and entropy nonce generated locally on visitor device.</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">Compact ZK Circuit</div>
+          <div class="step-desc">Proof Server executes zero-knowledge circuit with multi-input persistent hashing.</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">Zero-Knowledge Proof</div>
+          <div class="step-desc">Generates cryptographic proof verifying authorization without exposing raw passcodes.</div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">On-Chain Commitment</div>
+          <div class="step-desc">Disclosed commitment hash and visitor metrics submitted to Midnight network.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-grid">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">🔒</div>
+            Dual Private Witness Protection
+          </div>
+        </div>
+        <p style="color: var(--slate-600); font-size: 0.9rem; line-height: 1.6;">
+          Protects credentials using zero-knowledge entropy vectors without exposing passwords or personal data.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">⚡</div>
+            Native Wallet Integration
+          </div>
+        </div>
+        <p style="color: var(--slate-600); font-size: 0.9rem; line-height: 1.6;">
+          Seamless integration with Midnight Lace Wallet for secure transaction signing and proof verification.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">🌐</div>
+            On-Chain Verifiable Ledger
+          </div>
+        </div>
+        <p style="color: var(--slate-600); font-size: 0.9rem; line-height: 1.6;">
+          Deployed and verifiable on Midnight Preprod Testnet at <code style="font-size:0.75rem; word-break:break-all;">0x7a29f8c14e32049b8529341f98d011c750a49e21</code>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  </footer>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preprod Network Explorer | Visitor Verification Platform</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/index.html" class="brand">
+        <div class="brand-title">Visitor Verification</div>
+      </a>
+
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
+        <a href="/admin.html" class="nav-link">Venue Admin</a>
+        <a href="/inspector.html" class="nav-link">ZK Inspector</a>
+        <a href="/explorer.html" class="nav-link active">Explorer State</a>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="network-badge">
+          <div class="status-dot"></div>
+          Midnight Preprod
+        </div>
+        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="animated-entry">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <div class="card-icon">🌐</div>
+          Midnight Preprod Explorer & Network Diagnostics
+        </div>
+      </div>
+
+      <div class="status-list">
+        <div class="status-box">
+          <div class="status-box-header">Deployed Smart Contract Address</div>
+          <div class="status-box-value" id="contractAddr">0x7a29f8c14e32049b8529341f98d011c750a49e21</div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-box-header">Midnight Preprod Explorer</div>
+          <div class="status-box-value">
+            <a href="https://explorer.preprod.midnight.network" target="_blank" style="color:var(--amber-600); font-weight:700;">https://explorer.preprod.midnight.network</a>
+          </div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-box-header">Public Data Indexer Provider</div>
+          <div class="status-box-value">https://indexer.preprod.midnight.network</div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-box-header">ZK Proof Server Infrastructure</div>
+          <div class="status-box-value" id="explorerProofServerEl" style="color:#10b981; font-weight:700;">Midnight Preprod ZK Proof Service (ONLINE)</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  </footer>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>

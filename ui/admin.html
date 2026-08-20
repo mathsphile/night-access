@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Admin Console | Visitor Verification Platform</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+    }
+    @media (max-width: 900px) {
+      .grid-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/index.html" class="brand">
+        <div class="brand-title">Visitor Verification</div>
+      </a>
+
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
+        <a href="/admin.html" class="nav-link active">Venue Admin</a>
+        <a href="/inspector.html" class="nav-link">ZK Inspector</a>
+        <a href="/explorer.html" class="nav-link">Explorer State</a>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="network-badge">
+          <div class="status-dot"></div>
+          Midnight Preprod
+        </div>
+        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="animated-entry">
+    <div class="grid-container">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">🏛️</div>
+            Configure Venue Verifier
+          </div>
+        </div>
+
+        <form id="adminForm" onsubmit="handleVenueUpdate(event)">
+          <div class="form-group">
+            <label for="newVenueInput">New Target Venue / Verifier ID</label>
+            <input type="text" id="newVenueInput" value="venue_vip_lounge_b" placeholder="Enter verifier ID string">
+          </div>
+
+          <div class="form-group">
+            <label for="policySelect">Verification Policy Mode</label>
+            <input type="text" id="policySelect" value="Strict Passcode Hash Commitment" readonly style="background:var(--slate-100);">
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <span>🔄</span> Update On-Chain Verifier
+          </button>
+        </form>
+
+        <div id="adminNotice" style="display:none; margin-top:1rem; padding:0.85rem; background:var(--amber-100); border-radius:10px; color:var(--amber-700); font-size:0.88rem; font-weight:700;">
+          ✓ Active Verifier ID successfully updated!
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-icon">📊</div>
+            Attendance Analytics & Policy
+          </div>
+        </div>
+
+        <div class="status-list">
+          <div class="status-box">
+            <div class="status-box-header">Active Venue ID</div>
+            <div class="status-box-value" id="currentVenueLabel">venue_stadium_gate_a</div>
+          </div>
+
+          <div class="status-box">
+            <div class="status-box-header">Verifier Circuit Signature</div>
+            <div class="status-box-value">resetVerifier(newVerifier: Bytes&lt;32&gt;)</div>
+          </div>
+
+          <div class="status-box">
+            <div class="status-box-header">Zero-Knowledge Disclosure Policy</div>
+            <div class="status-box-value" style="color:var(--amber-600); font-weight:700;">disclose(newVerifier)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  </footer>
+
+  <script type="module" src="/src/index.ts"></script>
+  <script>
+    function handleVenueUpdate(e) {
+      e.preventDefault();
+      const val = document.getElementById('newVenueInput').value;
+      document.getElementById('currentVenueLabel').innerText = val;
+      const notice = document.getElementById('adminNotice');
+      if (notice) {
+        notice.style.display = 'block';
+        setTimeout(() => notice.style.display = 'none', 3000);
+      }
+    }
+  </script>
+</body>
+</html>

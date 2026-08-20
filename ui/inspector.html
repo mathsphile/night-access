@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZK Proof Inspector | Visitor Verification Platform</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+  <style>
+    .code-block {
+      background: var(--slate-900);
+      color: #fbbf24;
+      padding: 1.25rem;
+      border-radius: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="/index.html" class="brand">
+        <div class="brand-title">Visitor Verification</div>
+      </a>
+
+      <div class="nav-links">
+        <a href="/index.html" class="nav-link">Home</a>
+        <a href="/checkin.html" class="nav-link">Visitor Check-In</a>
+        <a href="/admin.html" class="nav-link">Venue Admin</a>
+        <a href="/inspector.html" class="nav-link active">ZK Inspector</a>
+        <a href="/explorer.html" class="nav-link">Explorer State</a>
+      </div>
+
+      <div class="navbar-actions">
+        <div class="network-badge">
+          <div class="status-dot"></div>
+          Midnight Preprod
+        </div>
+        <button class="connect-btn" id="connectWalletBtn">Connect Wallet</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="animated-entry">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <div class="card-icon">🔍</div>
+          Compact ZK Circuit Inspector (contracts/counter.compact)
+        </div>
+      </div>
+
+      <div class="status-list">
+        <div class="status-box">
+          <div class="status-box-header">Private Witness Function</div>
+          <div class="status-box-value">witness secretPasscode(): Bytes&lt;32&gt;;</div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-box-header">Exported Circuit Entrypoint</div>
+          <div class="status-box-value">export circuit verifyVisitor(expectedVerifier: Bytes&lt;32&gt;): Bytes&lt;32&gt;</div>
+        </div>
+
+        <div class="status-box">
+          <div class="status-box-header">Deliberate Disclosure Statement</div>
+          <div class="status-box-value">lastVisitorCommitment = disclose(visitorCommitment);</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre>// Compact Smart Contract Definition
+pragma language_version 0.23;
+import CompactStandardLibrary;
+
+export ledger visitorCount: Counter;
+export ledger verifierId: Bytes&lt;32&gt;;
+export ledger lastVisitorCommitment: Bytes&lt;32&gt;;
+
+witness secretPasscode(): Bytes&lt;32&gt;;
+
+export circuit verifyVisitor(expectedVerifier: Bytes&lt;32&gt;): Bytes&lt;32&gt; {
+  assert(verifierId == expectedVerifier, "Invalid verifier ID provided");
+  const passcode = secretPasscode();
+  const visitorCommitment = persistentHash&lt;Vector&lt;2, Bytes&lt;32&gt;&gt;&gt;([
+    pad(32, "vvp:visitor:commitment"),
+    passcode
+  ]);
+  visitorCount.increment(1);
+  const disclosedCommitment = disclose(visitorCommitment);
+  lastVisitorCommitment = disclosedCommitment;
+  return disclosedCommitment;
+}</pre>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>Visitor Verification Platform | Enterprise Zero-Knowledge Access Control Solution.</p>
+  </footer>
+
+  <script type="module" src="/src/index.ts"></script>
+</body>
+</html>
