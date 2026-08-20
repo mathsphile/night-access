@@ -17,7 +17,7 @@
     "test": "npm run test --workspaces --if-present",
     "deploy": "npm run deploy --workspace=bboard-cli",
     "deploy:local": "tsx scripts/deploy-local.ts",
-    "deploy:preprod": "tsx scripts/deploy-preprod.ts",
+    "deploy:preprod": "NODE_OPTIONS='--max-old-space-size=8192' tsx scripts/deploy-preprod.ts",
     "wallet:funding": "tsx scripts/get-funding-wallet.ts"
   },
   "workspaces": {
