@@ -141,9 +141,9 @@ VVP uses Midnight's Compact ZK circuit model:
 
 ## 🔗 Verification Links
 
-| Resource | Link |
+| Parameter | Link |
 |---|---|
-| 🚀 Live Demo | [visitor-verification-platform.vercel.app](https://visitor-verification-platform.vercel.app/) |
+| 🚀 Live Demo | [night-theta-coral.vercel.app](https://night-theta-coral.vercel.app/) |
 | 🎬 Demo Video | [youtu.be/rCD3mMkdK7A](https://youtu.be/rCD3mMkdK7A) |
 | 📦 GitHub Repository | [github.com/mathsphile/night-access](https://github.com/mathsphile/night-access) |
 | 🔍 Contract (latest) | [Preprod Explorer — d235cebe...](https://explorer.preprod.midnight.network/contracts/d235cebe33a0824447cd77650534966fca23a7e9810199a74ab42a1e1bff2460) |

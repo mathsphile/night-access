@@ -2,7 +2,7 @@
 
 > **Enterprise Zero-Knowledge Access Control & Visitor Verification** built natively on the **Midnight Network** using Compact smart contracts, client-side ZK-SNARK proving, dual-state ledger privacy, and Next.js 15.
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://visitor-verification-platform.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://night-theta-coral.vercel.app/)
 [![Demo Video](https://img.shields.io/badge/🎬_Demo_Video-YouTube-FF0000?style=for-the-badge&logo=youtube)](https://youtu.be/rCD3mMkdK7A)
 [![Midnight Preprod](https://img.shields.io/badge/🌐_Network-Midnight_Preprod-8b5cf6?style=for-the-badge)](https://explorer.preprod.midnight.network)
 [![Contract](https://img.shields.io/badge/📄_Contract-0xd235cebe...-06b6d4?style=for-the-badge)](https://explorer.preprod.midnight.network/contracts/d235cebe33a0824447cd77650534966fca23a7e9810199a74ab42a1e1bff2460)
