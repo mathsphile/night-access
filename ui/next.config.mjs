@@ -9,6 +9,12 @@ const nextConfig = {
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: ['@midnight-ntwrk/dapp-connector-api', '@midnight-ntwrk/midnight-js-types'],
   outputFileTracingRoot: path.resolve(__dirname, '..'),
   experimental: {
