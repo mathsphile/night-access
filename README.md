@@ -6,7 +6,6 @@
 [![Demo Video](https://img.shields.io/badge/🎬_Demo_Video-YouTube-FF0000?style=for-the-badge&logo=youtube)](https://youtu.be/rCD3mMkdK7A)
 [![Midnight Preprod](https://img.shields.io/badge/🌐_Network-Midnight_Preprod-8b5cf6?style=for-the-badge)](https://explorer.preprod.midnight.network)
 [![Contract](https://img.shields.io/badge/📄_Contract-0xd235cebe...-06b6d4?style=for-the-badge)](https://explorer.preprod.midnight.network/contracts/d235cebe33a0824447cd77650534966fca23a7e9810199a74ab42a1e1bff2460)
-[![CI/CD](https://img.shields.io/badge/⚙️_CI%2FCD_Pipeline-Passing-10b981?style=for-the-badge&logo=githubactions)](https://github.com/mathsphile/night-access/actions)
 [![License](https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge)](LICENSE)
 
 ---
