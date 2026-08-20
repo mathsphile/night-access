@@ -3,7 +3,6 @@
 > **Enterprise Zero-Knowledge Access Control & Visitor Verification** built natively on the **Midnight Network** using Compact smart contracts, client-side ZK-SNARK proving, dual-state ledger privacy, and Next.js 15.
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://night-theta-coral.vercel.app/)
-[![Demo Video](https://img.shields.io/badge/🎬_Demo_Video-YouTube-FF0000?style=for-the-badge&logo=youtube)](https://youtu.be/rCD3mMkdK7A)
 [![Midnight Preprod](https://img.shields.io/badge/🌐_Network-Midnight_Preprod-8b5cf6?style=for-the-badge)](https://explorer.preprod.midnight.network)
 [![Contract](https://img.shields.io/badge/📄_Contract-0xd235cebe...-06b6d4?style=for-the-badge)](https://explorer.preprod.midnight.network/contracts/d235cebe33a0824447cd77650534966fca23a7e9810199a74ab42a1e1bff2460)
 [![CI/CD](https://img.shields.io/badge/⚙️_CI%2FCD_Pipeline-Passing-10b981?style=for-the-badge&logo=githubactions)](https://github.com/mathsphile/night-access/actions)
@@ -11,15 +10,6 @@
 
 ---
 
-## 🎬 Video Demonstration
-
-Watch the complete end-to-end walkthrough of Night Access on Midnight Preprod:
-
-[![Night Access Video Demo](https://img.youtube.com/vi/rCD3mMkdK7A/maxresdefault.jpg)](https://youtu.be/rCD3mMkdK7A)
-
-> 📺 **Direct Link**: [https://youtu.be/rCD3mMkdK7A](https://youtu.be/rCD3mMkdK7A) — *Covers wallet connection, ZK witness generation, compact circuit verification, live preprod transactions, and administrative venue management.*
-
----
 
 ## 📸 Application Screenshots
 
