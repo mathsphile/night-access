@@ -202,42 +202,45 @@ export class MidnightWalletProvider implements MidnightProvider, WalletProvider 
           },
         };
 
-        const shieldedWallet = ShieldedWallet(config as any).startWithSeed(shieldedSeed);
-        const unshieldedWallet = UnshieldedWallet(config as any).startWithPublicKey(
+        const shieldedWallet = ShieldedWallet(config).startWithSeed(shieldedSeed);
+        const unshieldedWallet = UnshieldedWallet(config).startWithPublicKey(
           PublicKey.fromKeyStore(unshieldedKeystore),
         );
-        const dustWallet = DustWallet(config as any).restore(JSON.stringify(snapshot));
+        const dustWallet = DustWallet(config).restore(JSON.stringify(snapshot));
 
         const customSubmissionService = {
           submitTransaction: async (transaction: any, waitForStatus?: 'Submitted' | 'InBlock' | 'Finalized') => {
             const serialized = SerializedTransaction.from(transaction);
             const hex = u8aToHex(serialized);
             return new Promise<any>((resolve, reject) => {
-              polkadotApi.tx.midnight.sendMnTransaction(hex).send((result) => {
-                if (result.status.isInBlock) {
-                  logger.info(`Tx included in block: ${result.status.asInBlock.toHex()}`);
-                  const inBlockEvent = SubmissionEvent.InBlock({
-                    tx: serialized,
-                    blockHash: result.status.asInBlock.toString(),
-                    blockHeight: 0n,
-                    txHash: result.txHash.toString(),
-                  });
-                  if (!waitForStatus || waitForStatus === 'InBlock') {
-                    resolve(inBlockEvent);
-                  }
-                }
-                if (result.status.isFinalized) {
-                  logger.info(`Tx finalized: ${result.status.asFinalized.toHex()}`);
-                  resolve(
-                    SubmissionEvent.Finalized({
+              polkadotApi.tx.midnight
+                .sendMnTransaction(hex)
+                .send((result) => {
+                  if (result.status.isInBlock) {
+                    logger.info(`Tx included in block: ${result.status.asInBlock.toHex()}`);
+                    const inBlockEvent = SubmissionEvent.InBlock({
                       tx: serialized,
-                      blockHash: result.status.asFinalized.toString(),
+                      blockHash: result.status.asInBlock.toString(),
                       blockHeight: 0n,
                       txHash: result.txHash.toString(),
-                    }),
-                  );
-                }
-              }).catch(reject);
+                    });
+                    if (!waitForStatus || waitForStatus === 'InBlock') {
+                      resolve(inBlockEvent);
+                    }
+                  }
+                  if (result.status.isFinalized) {
+                    logger.info(`Tx finalized: ${result.status.asFinalized.toHex()}`);
+                    resolve(
+                      SubmissionEvent.Finalized({
+                        tx: serialized,
+                        blockHash: result.status.asFinalized.toString(),
+                        blockHeight: 0n,
+                        txHash: result.txHash.toString(),
+                      }),
+                    );
+                  }
+                })
+                .catch(reject);
             });
           },
           close: async () => {
